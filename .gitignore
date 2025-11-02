@@ -19,9 +19,6 @@ Library/PackageCache/
 *.userprefs
 *.pdb
 
-# ignore auto-generated
-*.meta
-
 # ignora Word y PDF en cualquier lado
 *.doc
 *.docx
