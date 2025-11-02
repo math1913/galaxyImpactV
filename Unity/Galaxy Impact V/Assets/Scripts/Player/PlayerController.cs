@@ -13,6 +13,12 @@ public class PlayerController : MonoBehaviour
     [Header("Referencias")]
     [SerializeField] private Camera cam;
 
+    [Header("Límites del mapa")]
+    [SerializeField] private SpriteRenderer mapBounds; // el sprite del fondo
+    private Vector2 minBounds;
+    private Vector2 maxBounds;
+    private float halfWidth;
+    private float halfHeight;
     private Rigidbody2D _rb;
     private Vector2 _moveInput;
     private Vector2 _currentVelocity;
@@ -21,6 +27,15 @@ public class PlayerController : MonoBehaviour
     {
         _rb = GetComponent<Rigidbody2D>();
         if (!cam) cam = Camera.main;
+        if (mapBounds)
+        {
+            minBounds = mapBounds.bounds.min;
+            maxBounds = mapBounds.bounds.max;
+
+            // tamaño aproximado del jugador (para no salirse por la mitad)
+            halfWidth = transform.localScale.x / 2f;
+            halfHeight = transform.localScale.y / 2f;
+        }
     }
 
     private void Update()
@@ -44,6 +59,12 @@ public class PlayerController : MonoBehaviour
 
         _currentVelocity = Vector2.MoveTowards(_rb.linearVelocity, targetVelocity, rate * Time.fixedDeltaTime);
         _rb.linearVelocity = _currentVelocity;
+        //para mantener al jugador dentro de los límites del mapa
+        Vector3 pos = transform.position;
+        pos.x = Mathf.Clamp(pos.x, minBounds.x + halfWidth, maxBounds.x - halfWidth); //ajuste para dejar espacio para la UI
+        pos.y = Mathf.Clamp(pos.y, minBounds.y + halfHeight, maxBounds.y - halfHeight); //ajuste para dejar espacio para la UI
+        transform.position = pos;
+
     }
 
     private void OnCollisionStay2D(Collision2D collision){ //funcion para que el jugador no empuje a los enemigos, ni viceversa

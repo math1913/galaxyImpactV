@@ -1,0 +1,29 @@
+### UNITY ###
+[Ll]ibrary/
+[Tt]emp/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Oo]bj/
+MemoryCaptures/
+UserSettings/
+CrashReports/
+Library/PackageCache/
+
+# Visual Studio
+*.csproj
+*.sln
+*.unityproj
+*.pidb
+*.user
+*.userprefs
+*.pdb
+
+# ignore auto-generated
+*.meta
+
+### TU PEDIDO (extra) ###
+# ignora Word y PDF en cualquier lado
+*.doc
+*.docx
+*.pdf

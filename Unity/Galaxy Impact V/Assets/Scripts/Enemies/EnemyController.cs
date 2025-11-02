@@ -16,6 +16,7 @@ public class EnemyController : MonoBehaviour
     private Transform player;
     private Rigidbody2D rb;
     private float touchTimer;
+    public UnityEngine.Events.UnityEvent OnDeath = new UnityEngine.Events.UnityEvent();
 
     private void Awake()
     {
@@ -27,10 +28,19 @@ public class EnemyController : MonoBehaviour
     private void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
+        if (health)
+        {
+            // Notifica al WaveManager cuando muere
+            health.OnDeath.AddListener(() => OnDeath.Invoke());
+        }
+    }
 
-        // Cuando muere, lo destruimos
-        if (health != null)
-            health.OnDeath.AddListener(() => Destroy(gameObject));
+    /// <summary>
+    /// Ajusta la dificultad multiplicando la velocidad base.
+    /// </summary>
+    public void SetDifficultyMultiplier(float multiplier)
+    {
+        moveSpeed *= multiplier;
     }
 
     private void FixedUpdate(){
