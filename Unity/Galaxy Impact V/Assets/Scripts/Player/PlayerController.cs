@@ -12,30 +12,26 @@ public class PlayerController : MonoBehaviour
 
     [Header("Referencias")]
     [SerializeField] private Camera cam;
+    [SerializeField] private SpriteRenderer background; // Fondo de referencia
+    [SerializeField] private float margin = 0.5f;       // Margen interno opcional
 
-    [Header("Límites del mapa")]
-    [SerializeField] private SpriteRenderer mapBounds; // el sprite del fondo
-    private Vector2 minBounds;
-    private Vector2 maxBounds;
-    private float halfWidth;
-    private float halfHeight;
     private Rigidbody2D _rb;
     private Vector2 _moveInput;
     private Vector2 _currentVelocity;
+
+    private Vector2 minBounds;
+    private Vector2 maxBounds;
 
     private void Awake()
     {
         _rb = GetComponent<Rigidbody2D>();
         if (!cam) cam = Camera.main;
-        if (mapBounds)
-        {
-            minBounds = mapBounds.bounds.min;
-            maxBounds = mapBounds.bounds.max;
+    }
 
-            // tamaño aproximado del jugador (para no salirse por la mitad)
-            halfWidth = transform.localScale.x / 2f;
-            halfHeight = transform.localScale.y / 2f;
-        }
+    private void Start()
+    {
+        if (background != null)
+            UpdateBounds();
     }
 
     private void Update()
@@ -55,28 +51,40 @@ public class PlayerController : MonoBehaviour
         Vector2 targetVelocity = _moveInput * moveSpeed;
 
         // Interpolación entre aceleración y frenado
-        float rate = (targetVelocity.magnitude > _rb.linearVelocity.magnitude)? acceleration : deceleration;
+        float rate = (targetVelocity.magnitude > _rb.linearVelocity.magnitude) ? acceleration : deceleration;
 
         _currentVelocity = Vector2.MoveTowards(_rb.linearVelocity, targetVelocity, rate * Time.fixedDeltaTime);
         _rb.linearVelocity = _currentVelocity;
-        //para mantener al jugador dentro de los límites del mapa
-        Vector3 pos = transform.position;
-        pos.x = Mathf.Clamp(pos.x, minBounds.x + halfWidth, maxBounds.x - halfWidth); //ajuste para dejar espacio para la UI
-        pos.y = Mathf.Clamp(pos.y, minBounds.y + halfHeight, maxBounds.y - halfHeight); //ajuste para dejar espacio para la UI
-        transform.position = pos;
-
     }
 
-    private void OnCollisionStay2D(Collision2D collision){ //funcion para que el jugador no empuje a los enemigos, ni viceversa
-        if (!collision.collider.CompareTag("Enemy")) // si no hay contacto sale
+    private void LateUpdate()
+    {
+        if (background == null) return;
+
+        // Limitar la posición del jugador dentro del fondo
+        Vector3 pos = transform.position;
+
+        pos.x = Mathf.Clamp(pos.x, minBounds.x + margin, maxBounds.x - margin);
+        pos.y = Mathf.Clamp(pos.y, minBounds.y + margin, maxBounds.y - margin);
+
+        transform.position = pos;
+    }
+
+    private void UpdateBounds()
+    {
+        Bounds bgBounds = background.bounds; // límites reales del sprite en el mundo
+        minBounds = bgBounds.min;
+        maxBounds = bgBounds.max;
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        // Evita empujones entre enemigos y jugador
+        if (!collision.collider.CompareTag("Enemy"))
             return;
 
-        // Vector desde el jugador hacia el enemigo
         Vector2 toEnemy = (collision.collider.transform.position - transform.position).normalized;
-
-        // Proyección de la velocidad en la dirección del enemigo
         float towardEnemy = Vector2.Dot(_rb.linearVelocity, toEnemy);
-        // Si la velocidad va hacia el enemigo, cancela solo esa componente
         if (towardEnemy > 0f)
             _rb.linearVelocity -= toEnemy * towardEnemy;
     }
