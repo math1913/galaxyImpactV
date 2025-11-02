@@ -22,7 +22,6 @@ Library/PackageCache/
 # ignore auto-generated
 *.meta
 
-### TU PEDIDO (extra) ###
 # ignora Word y PDF en cualquier lado
 *.doc
 *.docx
