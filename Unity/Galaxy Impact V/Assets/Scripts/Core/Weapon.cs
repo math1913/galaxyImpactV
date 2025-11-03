@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.Events;
 
 /// Control básico de disparo con recarga y dispersión opcional.
 public class Weapon : MonoBehaviour
@@ -17,7 +18,7 @@ public class Weapon : MonoBehaviour
 
     public int CurrentAmmo { get; private set; }
     public bool IsReloading { get; private set; }
-
+    public UnityEvent<int> OnAmmoChanged; // evento (valor actual)
     float cooldown;
 
     private void Awake() => CurrentAmmo = magazineSize;
@@ -46,15 +47,9 @@ public class Weapon : MonoBehaviour
     public void Reload()
     {
         if (IsReloading || CurrentAmmo == magazineSize) return;
-        StartCoroutine(ReloadRoutine());
-    }
-
-    IEnumerator ReloadRoutine()
-    {
         IsReloading = true;
-        yield return new WaitForSeconds(reloadTime);
-        CurrentAmmo = magazineSize;
-        IsReloading = false;
+        OnAmmoChanged?.Invoke(CurrentAmmo); // Actualizar UI
+        StartCoroutine(ReloadRoutine());
     }
 
     void Fire()
@@ -68,6 +63,20 @@ public class Weapon : MonoBehaviour
         go.transform.rotation = muzzle.rotation * Quaternion.Euler(0, 0, Random.Range(-spreadDeg, spreadDeg));
         go.SetActive(true);
 
-        if (go.TryGetComponent<Bullet>(out var b) && bulletPool) b.Init(bulletPool);
+        if (go.TryGetComponent<Bullet>(out var b) && bulletPool)
+            b.Init(bulletPool);
+
+        // 🔹 Actualizar UI
+        OnAmmoChanged?.Invoke(CurrentAmmo);
+    }
+
+    IEnumerator ReloadRoutine()
+    {
+        yield return new WaitForSeconds(reloadTime);
+        CurrentAmmo = magazineSize;
+        IsReloading = false;
+
+        // Actualizar UI
+        OnAmmoChanged?.Invoke(CurrentAmmo);
     }
 }

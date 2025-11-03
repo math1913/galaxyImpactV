@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Events;
+using System.Collections;
 
 /// Componente genérico de vida, con eventos para UI o efectos.
 public class Health : MonoBehaviour
@@ -29,7 +30,7 @@ public class Health : MonoBehaviour
         if (_isDead) return;
         CurrentHealth = Mathf.Clamp(CurrentHealth + amount, 0, maxHealth); //para que no tenga vida negativa ni mas del max
         OnHealthChanged?.Invoke(CurrentHealth, maxHealth);
-        Debug.Log($"Player HP: {CurrentHealth}/{maxHealth}");
+        //Debug.Log($"Player HP: {CurrentHealth}/{maxHealth}");
     }
 
     public void TakeDamage(int amount)
@@ -38,17 +39,27 @@ public class Health : MonoBehaviour
         CurrentHealth = Mathf.Max(0, CurrentHealth - amount);
         OnDamage?.Invoke(amount);
         OnHealthChanged?.Invoke(CurrentHealth, maxHealth);
-        Debug.Log($"Player HP: {CurrentHealth}/{maxHealth}");
-        if (CurrentHealth == 0) Die();
+        //Debug.Log($"Player HP: {CurrentHealth}/{maxHealth}");
+        if (CurrentHealth == 0)
+            Die();
     }
 
-    private void Die()
-    {
-        if (_isDead) return;
-        _isDead = true;
-        OnDeath?.Invoke();
-        if (destroyOnDeath) Destroy(gameObject);
-    }
+private void Die()
+{
+    if (_isDead) return;
+
+    _isDead = true;
+    OnDeath?.Invoke();
+
+    if (destroyOnDeath)
+        StartCoroutine(DestroyAfterFrame());
+}
+
+private IEnumerator DestroyAfterFrame()
+{
+    yield return null; // Espera 1 frame (permite que el HUD procese el evento)
+    Destroy(gameObject);
+}
 
     public void ResetHealth()
     {

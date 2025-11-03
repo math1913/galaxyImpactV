@@ -1,12 +1,10 @@
 using UnityEngine;
 using TMPro;
 
-/// <summary>
 /// Controla la interfaz de usuario (HUD) del juego:
 ///  - Muestra la vida del jugador.
 ///  - Muestra la munición actual.
 ///  - Muestra la oleada actual.
-/// </summary>
 public class HUDController : MonoBehaviour
 {
     [Header("Referencias del jugador")]
@@ -20,6 +18,8 @@ public class HUDController : MonoBehaviour
     [Tooltip("Script WaveManager para mostrar la oleada actual.")]
     [SerializeField] private WaveManager waveManager;
 
+    [SerializeField] private UnityEngine.UI.Slider healthBar;
+
     [Header("Elementos de UI")]
     [SerializeField] private TMP_Text healthText;
     [SerializeField] private TMP_Text ammoText;
@@ -29,50 +29,54 @@ public class HUDController : MonoBehaviour
     {
         // Suscribirse a eventos del WaveManager
         if (waveManager)
-        {
             waveManager.OnWaveStarted.AddListener(UpdateWaveText);
+
+        if (playerHealth)
+            playerHealth.OnHealthChanged.AddListener(OnHealthChanged);
+
+        if (playerWeapon)
+        {
+            playerWeapon.OnAmmoChanged.AddListener(UpdateAmmo);
+            Debug.Log("HUD → Suscrito al evento de arma correctamente");
+            UpdateAmmo(playerWeapon.CurrentAmmo);
         }
 
         // Actualizar valores iniciales
         RefreshHealth();
-        RefreshAmmo();
     }
 
-    private void Update()
-    {
-        // Actualiza continuamente vida y munición
-        RefreshHealth();
-        RefreshAmmo();
-    }
-
-    /// <summary>
     /// Actualiza la vida en pantalla.
-    /// </summary>
     private void RefreshHealth()
     {
         if (!playerHealth || !healthText) return;
+
+        float ratio = (float)playerHealth.CurrentHealth / playerHealth.MaxHealth;
         healthText.text = $"HP: {playerHealth.CurrentHealth}/{playerHealth.MaxHealth}";
+
+        if (healthBar)
+            healthBar.value = ratio;
     }
 
-    /// <summary>
-    /// Actualiza la munición en pantalla.
-    /// </summary>
-    private void RefreshAmmo()
-    {
-        if (!playerWeapon || !ammoText) return;
-
-        if (playerWeapon.IsReloading)
-            ammoText.text = "Reloading...";
-        else
-            ammoText.text = $"Ammo: {playerWeapon.CurrentAmmo}";
-    }
-
-    /// <summary>
     /// Se ejecuta al comenzar una nueva oleada.
-    /// </summary>
     private void UpdateWaveText(int wave)
     {
         if (!waveText) return;
-        waveText.text = $"Wave {wave}";
+        waveText.text = $"ROUND {wave}";
+    }
+
+    /// 🔹 Se llama cuando el evento de Weapon cambia la munición
+    private void UpdateAmmo(int current)
+    {
+        if (ammoText)
+            ammoText.text = playerWeapon.IsReloading ? "Reloading..." : $"AMMO: {current}";
+    }
+
+    private void OnHealthChanged(int current, int max)
+    {
+        float ratio = (float)current / max;
+        if (healthText)
+            healthText.text = $"HP: {current}/{max}";
+        if (healthBar)
+            healthBar.value = ratio;
     }
 }
