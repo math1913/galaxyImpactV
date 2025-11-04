@@ -60,7 +60,6 @@ public class WaveManager : MonoBehaviour
 
         // Inicia la rutina de oleadas
         waveRoutine = StartCoroutine(WaveLoop());
-        
     }
 
     /// <summary>
@@ -92,7 +91,7 @@ public class WaveManager : MonoBehaviour
             yield return new WaitForSeconds(timeBetweenWaves);
         }
 
-        Debug.Log("✅ Todas las oleadas completadas.");
+        Debug.Log("Todas las oleadas completadas.");
     }
 
     /// <summary>
