@@ -1,56 +1,58 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-/// <summary>
-/// Controla el sistema de oleadas de enemigos:
-///  - Spawnea enemigos en posiciones aleatorias alrededor del jugador.
-///  - Espera a que todos mueran antes de iniciar la siguiente oleada.
-///  - Incrementa dificultad progresivamente.
-/// </summary>
+[System.Serializable]
+public class PickupEntry
+{
+    public GameObject prefab;
+    [Range(0f, 1f)]
+    [Tooltip("Probabilidad de que este pickup aparezca en una oleada.")]
+    public float spawnChance = 0.3f;
+    [Tooltip("Número máximo de instancias de este pickup por oleada.")]
+    public int maxPerWave = 2;
+}
+
 public class WaveManager : MonoBehaviour
 {
     [Header("Configuración general")]
-    [Tooltip("Prefab del enemigo que se instanciará en cada oleada.")]
     [SerializeField] private GameObject enemyPrefab;
-
-    [Tooltip("Número de oleadas totales que se generarán.")]
     [SerializeField] private int totalWaves = 5;
-
-    [Tooltip("Tiempo entre oleadas (segundos).")]
     [SerializeField] private float timeBetweenWaves = 5f;
 
-    [Tooltip("Distancia mínima desde el jugador al generar enemigos.")]
+    [Tooltip("Distancia mínima desde el jugador al generar enemigos/pickups.")]
     [SerializeField] private float spawnRadius = 8f;
 
-    [Tooltip("Distancia máxima desde el jugador al generar enemigos.")]
+    [Tooltip("Distancia máxima desde el jugador al generar enemigos/pickups.")]
     [SerializeField] private float spawnRadiusMax = 14f;
 
     [Header("Escalado de dificultad")]
-    [Tooltip("Número inicial de enemigos en la primera oleada.")]
     [SerializeField] private int enemiesFirstWave = 3;
-
-    [Tooltip("Incremento de enemigos por oleada.")]
     [SerializeField] private int enemyIncreasePerWave = 2;
-
-    [Tooltip("Multiplicador de velocidad por oleada (1 = sin cambio).")]
     [SerializeField] private float speedMultiplierPerWave = 1.1f;
 
     [Header("Referencias")]
-    [Tooltip("Referencia al jugador, para saber desde dónde calcular el spawn.")]
     [SerializeField] private Transform player;
 
-    // Eventos opcionales (para actualizar el HUD, sonidos, etc.)
     [Header("Eventos")]
-    public UnityEvent<int> OnWaveStarted;      // Pasa el número de oleada
-    public UnityEvent<int> OnWaveCompleted;    // Pasa el número de oleada
+    public UnityEvent<int> OnWaveStarted;
+    public UnityEvent<int> OnWaveCompleted;
+
+    [Header("Pickups")]
+    [Tooltip("Lista de tipos de pickup con su probabilidad y máximo por oleada.")]
+    [SerializeField] private List<PickupEntry> pickups = new List<PickupEntry>();
+
+    [Tooltip("Si true, spawnea pickups al INICIAR cada oleada.")]
+    [SerializeField] private bool spawnPickupsOnWaveStart = false;
+
+    [Tooltip("Si true, spawnea pickups al TERMINAR cada oleada.")]
+    [SerializeField] private bool spawnPickupsOnWaveEnd = true;
 
     // Estado interno
     private int currentWave = 0;
     private int enemiesAlive = 0;
     private bool spawning = false;
-
-    // Control de la corrutina principal
     private Coroutine waveRoutine;
 
     private void Start()
@@ -58,45 +60,35 @@ public class WaveManager : MonoBehaviour
         if (!player)
             player = GameObject.FindGameObjectWithTag("Player")?.transform;
 
-        // Inicia la rutina de oleadas
         waveRoutine = StartCoroutine(WaveLoop());
     }
 
-    /// <summary>
-    /// Bucle principal de oleadas.
-    /// </summary>
     private IEnumerator WaveLoop()
     {
-        // Recorre todas las oleadas hasta alcanzar el total configurado
         for (int i = 1; i <= totalWaves; i++)
         {
             currentWave = i;
-
-            // Notifica inicio de oleada (HUD puede mostrar “Wave X”)
             OnWaveStarted?.Invoke(currentWave);
 
-            // Calcula cuántos enemigos debe tener esta oleada
+            if (spawnPickupsOnWaveStart)
+                SpawnPickupsForWave();
+
             int enemiesThisWave = enemiesFirstWave + (i - 1) * enemyIncreasePerWave;
 
-            // Spawnea enemigos
             yield return StartCoroutine(SpawnWave(enemiesThisWave));
-
-            // Espera hasta que todos los enemigos mueran
             yield return new WaitUntil(() => enemiesAlive <= 0);
 
-            // Notifica fin de oleada
             OnWaveCompleted?.Invoke(currentWave);
 
-            // Espera unos segundos antes de la siguiente oleada
+            if (spawnPickupsOnWaveEnd)
+                SpawnPickupsForWave();
+
             yield return new WaitForSeconds(timeBetweenWaves);
         }
 
         Debug.Log("Todas las oleadas completadas.");
     }
 
-    /// <summary>
-    /// Genera una oleada de 'count' enemigos.
-    /// </summary>
     private IEnumerator SpawnWave(int count)
     {
         spawning = true;
@@ -106,31 +98,55 @@ public class WaveManager : MonoBehaviour
 
         for (int i = 0; i < count; i++)
         {
-            // Calcula posición aleatoria en un anillo alrededor del jugador
             Vector2 spawnDir = Random.insideUnitCircle.normalized;
             float distance = Random.Range(spawnRadius, spawnRadiusMax);
             Vector3 spawnPos = player.position + new Vector3(spawnDir.x, spawnDir.y, 0) * distance;
 
-            // Instancia el enemigo
             GameObject enemy = Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
 
-            // Escala su dificultad si tiene EnemyController
             if (enemy.TryGetComponent<EnemyController>(out var ec))
             {
                 ec.SetDifficultyMultiplier(Mathf.Pow(speedMultiplierPerWave, currentWave - 1));
                 ec.OnDeath.AddListener(() => enemiesAlive--);
             }
 
-            // Espera pequeña pausa entre spawns (mejor ritmo)
             yield return new WaitForSeconds(0.3f);
         }
 
         spawning = false;
     }
 
-    /// <summary>
-    /// Para corrutina si el juego se reinicia o pausa.
-    /// </summary>
+    //lógica de spawn de pickups
+    private void SpawnPickupsForWave()
+    {
+        if (player == null)
+        {
+            Debug.LogWarning("WaveManager: player no asignado; no se pueden spawnear pickups.");
+            return;
+        }
+
+        foreach (var entry in pickups)
+        {
+            if (entry?.prefab == null) continue;
+
+            // Probabilidad por tipo
+            if (Random.value > entry.spawnChance) continue;
+
+            // Entre 1 y maxPerWave (si maxPerWave <= 0, se salta)
+            if (entry.maxPerWave <= 0) continue;
+            int count = Random.Range(1, entry.maxPerWave + 1);
+
+            for (int i = 0; i < count; i++)
+            {
+                Vector2 dir = Random.insideUnitCircle.normalized;
+                float dist = Random.Range(spawnRadius, spawnRadiusMax);
+                Vector3 pos = player.position + new Vector3(dir.x, dir.y, 0) * dist;
+
+                Instantiate(entry.prefab, pos, Quaternion.identity);
+            }
+        }
+    }
+
     public void StopWaves()
     {
         if (waveRoutine != null)

@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using System.Diagnostics;
 
 /// Controla la interfaz de usuario (HUD) del juego:
 ///  - Muestra la vida del jugador.
@@ -37,7 +38,7 @@ public class HUDController : MonoBehaviour
         if (playerWeapon)
         {
             playerWeapon.OnAmmoChanged.AddListener(UpdateAmmo);
-            Debug.Log("HUD → Suscrito al evento de arma correctamente");
+            //Debug.Log("HUD → Suscrito al evento de arma correctamente");
             UpdateAmmo(playerWeapon.CurrentAmmo);
         }
 
@@ -64,18 +65,18 @@ public class HUDController : MonoBehaviour
         waveText.text = $"ROUND {wave}";
     }
 
-    /// 🔹 Se llama cuando el evento de Weapon cambia la munición
+    /// Se llama cuando el evento de Weapon cambia la munición
     private void UpdateAmmo(int current)
     {
         if (ammoText)
-            ammoText.text = playerWeapon.IsReloading ? "Reloading..." : $"AMMO: {current}";
+            ammoText.text = playerWeapon.IsReloading ? "Reloading..." : $"Ammo: {current} / {playerWeapon.TotalAmmo}";
     }
 
     private void OnHealthChanged(int current, int max)
     {
         float ratio = (float)current / max;
         if (healthText)
-            healthText.text = $"HP: {current}/{max}";
+            healthText.text = $"HP: {current}";
         if (healthBar)
             healthBar.value = ratio;
     }

@@ -16,12 +16,26 @@ public class Weapon : MonoBehaviour
     [SerializeField] private float reloadTime = 1.2f;
     [SerializeField, Range(0f, 8f)] private float spreadDeg = 2f;
 
+    [Header("Ammo (Total)")]
+    [Tooltip("Balas en reserva (además de las del cargador). Editable en el Inspector.")]
+    [SerializeField] private int totalAmmo = 90;
+    public int TotalAmmo { get; private set; }   // reserva actual
+
     public int CurrentAmmo { get; private set; }
     public bool IsReloading { get; private set; }
-    public UnityEvent<int> OnAmmoChanged; // evento (valor actual)
+    public UnityEvent<int> OnAmmoChanged; // evento (valor actual del cargador)
+    public UnityEvent<int> OnTotalAmmoChanged; // evento (valor actual de la reserva)
     float cooldown;
 
-    private void Awake() => CurrentAmmo = magazineSize;
+    private void Awake()
+    {
+        CurrentAmmo = magazineSize;
+        TotalAmmo = totalAmmo; // inicializa la reserva con el valor del inspector
+
+        // Actualizar UI si hay listeners
+        OnAmmoChanged?.Invoke(CurrentAmmo);
+        OnTotalAmmoChanged?.Invoke(TotalAmmo);
+    }
 
     private void Update()
     {
@@ -46,9 +60,11 @@ public class Weapon : MonoBehaviour
 
     public void Reload()
     {
-        if (IsReloading || CurrentAmmo == magazineSize) return;
+        // Si ya está recargando, o cargador lleno, o no hay reserva, no hace nada.
+        if (IsReloading || CurrentAmmo == magazineSize || TotalAmmo <= 0) return;
         IsReloading = true;
-        OnAmmoChanged?.Invoke(CurrentAmmo); // Actualizar UI
+        OnAmmoChanged?.Invoke(CurrentAmmo); // Actualizar UI del cargador (opcional)
+        OnTotalAmmoChanged?.Invoke(TotalAmmo); // Actualizar UI de la reserva (opcional)
         StartCoroutine(ReloadRoutine());
     }
 
@@ -66,17 +82,28 @@ public class Weapon : MonoBehaviour
         if (go.TryGetComponent<Bullet>(out var b) && bulletPool)
             b.Init(bulletPool);
 
-        // 🔹 Actualizar UI
+        // aualizar UI
         OnAmmoChanged?.Invoke(CurrentAmmo);
+        // Nota: disparar no afecta la reserva, así que no tocamos TotalAmmo aquí.
     }
 
     IEnumerator ReloadRoutine()
     {
         yield return new WaitForSeconds(reloadTime);
-        CurrentAmmo = magazineSize;
+
+        // Cuántas balas necesita el cargador
+        int needed = magazineSize - CurrentAmmo;
+        // Cuántas balas podemos tomar de la reserva
+        int takeFromReserve = Mathf.Min(needed, TotalAmmo);
+
+        // Rellenar cargador con lo tomado
+        CurrentAmmo += takeFromReserve;
+        TotalAmmo -= takeFromReserve;
+
         IsReloading = false;
 
         // Actualizar UI
         OnAmmoChanged?.Invoke(CurrentAmmo);
+        OnTotalAmmoChanged?.Invoke(TotalAmmo);
     }
 }

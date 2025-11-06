@@ -24,6 +24,15 @@ public class Health : MonoBehaviour
         CurrentHealth = maxHealth;
         OnHealthChanged?.Invoke(CurrentHealth, maxHealth);
     }
+    public void SetMaxHealth(int newMaxHealth, bool resetCurrent = true)
+    {
+        maxHealth = Mathf.Max(1, newMaxHealth);
+        if (resetCurrent)
+            CurrentHealth = maxHealth;
+
+        _isDead = false;
+        OnHealthChanged?.Invoke(CurrentHealth, maxHealth);
+    }
 
     public void Heal(int amount)
     {
