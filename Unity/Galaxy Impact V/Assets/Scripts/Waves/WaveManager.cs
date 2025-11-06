@@ -40,6 +40,9 @@ public class WaveManager : MonoBehaviour
     public UnityEvent<int> OnWaveCompleted;
 
     [Header("Pickups")]
+    [SerializeField] private LayerMask pickupObstructMask;         // layers que bloquean
+    [SerializeField] private bool includeTriggerObstacles = true;  // contar triggers como obstáculo
+    [SerializeField, Min(0f)] private float spawnPadding = 0.05f;  // margen extra alrededor del collider
     [Tooltip("Lista de tipos de pickup con su probabilidad y máximo por oleada.")]
     [SerializeField] private List<PickupEntry> pickups = new List<PickupEntry>();
 
@@ -142,11 +145,26 @@ public class WaveManager : MonoBehaviour
                 float dist = Random.Range(spawnRadius, spawnRadiusMax);
                 Vector3 pos = player.position + new Vector3(dir.x, dir.y, 0) * dist;
 
-                Instantiate(entry.prefab, pos, Quaternion.identity);
+                var goodPos = GetValidSpawn2D(pos, 0.4f);
+                Instantiate(entry.prefab, goodPos, Quaternion.identity);
+
             }
         }
     }
+    private Vector3 GetValidSpawn2D(Vector3 candidate, float radius, int tries = 10000)
+    {
+        while (tries-- > 0)
+        {
+            if (!Physics2D.OverlapCircle(candidate, radius, pickupObstructMask))
+                return candidate;
 
+            // si está bloqueado → muevo un poco al costado
+            candidate += (Vector3)(Random.insideUnitCircle * radius);
+        }
+
+        return candidate; // fallback
+    }
+    // buffer reusado para evitar GC
     public void StopWaves()
     {
         if (waveRoutine != null)

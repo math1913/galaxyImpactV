@@ -7,10 +7,11 @@ public class PickupAmmo : PickupBase
     protected override void OnPickup(Collider2D player)
     {
         // Ejemplo: accede a la clase Weapon del jugador
-        if (player.TryGetComponent<Weapon>(out var weapon))
+        Transform muzzle = player.transform.Find("Muzzle");
+        if (muzzle && muzzle.TryGetComponent<Weapon>(out var weapon))
         {
-            Debug.Log($"Recogió munición +{ammoAmount}");
-            // weapon.AddAmmo(ammoAmount);
+            Debug.Log($"Recogió munición + {ammoAmount}");
+            weapon.AddAmmo(ammoAmount);
         }
     }
 }

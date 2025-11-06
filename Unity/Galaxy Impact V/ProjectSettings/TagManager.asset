@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Enemy
   - Pickup
+  - Background
+  - HUD
+  - Background Object
   layers:
   - Default
   - TransparentFX

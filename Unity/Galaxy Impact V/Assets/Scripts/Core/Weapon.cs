@@ -17,7 +17,7 @@ public class Weapon : MonoBehaviour
     [SerializeField, Range(0f, 8f)] private float spreadDeg = 2f;
 
     [Header("Ammo (Total)")]
-    [Tooltip("Balas en reserva (además de las del cargador). Editable en el Inspector.")]
+    [Tooltip("Balas en reserva")]
     [SerializeField] private int totalAmmo = 90;
     public int TotalAmmo { get; private set; }   // reserva actual
 
@@ -66,6 +66,11 @@ public class Weapon : MonoBehaviour
         OnAmmoChanged?.Invoke(CurrentAmmo); // Actualizar UI del cargador (opcional)
         OnTotalAmmoChanged?.Invoke(TotalAmmo); // Actualizar UI de la reserva (opcional)
         StartCoroutine(ReloadRoutine());
+    }
+    public void AddAmmo(int amount)
+    {
+        TotalAmmo += amount;
+        OnTotalAmmoChanged?.Invoke(TotalAmmo);
     }
 
     void Fire()

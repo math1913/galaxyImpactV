@@ -38,10 +38,10 @@ public class HUDController : MonoBehaviour
         if (playerWeapon)
         {
             playerWeapon.OnAmmoChanged.AddListener(UpdateAmmo);
+            playerWeapon.OnTotalAmmoChanged.AddListener(UpdateAmmo);
             //Debug.Log("HUD → Suscrito al evento de arma correctamente");
             UpdateAmmo(playerWeapon.CurrentAmmo);
         }
-
         // Actualizar valores iniciales
         RefreshHealth();
     }
@@ -66,10 +66,16 @@ public class HUDController : MonoBehaviour
     }
 
     /// Se llama cuando el evento de Weapon cambia la munición
-    private void UpdateAmmo(int current)
+    private void UpdateAmmo(int _)
     {
-        if (ammoText)
-            ammoText.text = playerWeapon.IsReloading ? "Reloading..." : $"Ammo: {current} / {playerWeapon.TotalAmmo}";
+        if (!ammoText) return;
+
+        int current = playerWeapon.CurrentAmmo;
+        int total = playerWeapon.TotalAmmo;
+
+        ammoText.text = playerWeapon.IsReloading
+            ? "Reloading..."
+            : $"Ammo: {current} / {total}";
     }
 
     private void OnHealthChanged(int current, int max)

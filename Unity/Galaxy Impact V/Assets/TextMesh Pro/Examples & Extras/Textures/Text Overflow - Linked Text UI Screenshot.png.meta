@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Text Overflow - Linked Text UI Screenshot_0: -4213081504842850975
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
