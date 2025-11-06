@@ -87,5 +87,29 @@ public class PlayerController : MonoBehaviour
         float towardEnemy = Vector2.Dot(_rb.linearVelocity, toEnemy);
         if (towardEnemy > 0f)
             _rb.linearVelocity -= toEnemy * towardEnemy;
+        Debug.Log("Chocó con: " + collision.gameObject.name);
     }
+    public class CollisionDebugger : MonoBehaviour
+{
+    void OnCollisionEnter(Collision collision)
+    {
+        Debug.Log("[COLLISION] Con: " + collision.gameObject.name);
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        Debug.Log("[TRIGGER] Con: " + other.gameObject.name);
+    }
+
+    void OnCollisionStay(Collision collision)
+    {
+        Debug.Log("[STAY] Sigues tocando: " + collision.gameObject.name);
+    }
+
+    void OnTriggerStay(Collider other)
+    {
+        Debug.Log("[STAY TRIGGER] Sigues dentro de: " + other.gameObject.name);
+    }
+}
+
 }
