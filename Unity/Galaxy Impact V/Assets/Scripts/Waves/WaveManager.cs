@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-
+using Pathfinding;
 [System.Serializable]
 public class PickupEntry
 {
@@ -106,10 +106,11 @@ public class WaveManager : MonoBehaviour
             Vector3 spawnPos = player.position + new Vector3(spawnDir.x, spawnDir.y, 0) * distance;
 
             GameObject enemy = Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
-
+            var setter = enemy.GetComponent<AIDestinationSetter>();
+            setter.target = GameObject.FindGameObjectWithTag("Player")?.transform;
             if (enemy.TryGetComponent<EnemyController>(out var ec))
             {
-                ec.SetDifficultyMultiplier(Mathf.Pow(speedMultiplierPerWave, currentWave - 1));
+                ec.SetDifficultyMultiplier(Mathf.Pow(speedMultiplierPerWave, currentWave - 1)); // no existe mas el metodo porque por ahora no quiero que aumente la velocidad de los enemigos cada ronda
                 ec.OnDeath.AddListener(() => enemiesAlive--);
             }
 
