@@ -235,7 +235,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ade25803cc5e38a4396dbb78027a21e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sizeMultiplier: 1.5
+  sizeMultiplier: 2.5
   cam: {fileID: 319980085}
 --- !u!1 &55677177
 GameObject:
@@ -576,7 +576,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 0.5
+  m_Radius: 0.0658351
 --- !u!50 &155139136
 Rigidbody2D:
   serializedVersion: 5
@@ -648,8 +648,8 @@ SpriteRenderer:
   m_SortingLayerID: 1077288577
   m_SortingLayer: 1
   m_SortingOrder: 10
-  m_Sprite: {fileID: 7482667652216324306, guid: ff2e4328a5bed25498c1534bb58c2cc4, type: 3}
-  m_Color: {r: 0.4442197, g: 1, b: 0, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 78d03ce1d36c540d5a183e4b042d3afb, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -669,7 +669,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 10, y: 10, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1473738134}
@@ -687,7 +687,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78a9cf851e9560845b7ff5e9cbbe4d45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 15
+  moveSpeed: 3
   acceleration: 40
   deceleration: 40
   cam: {fileID: 319980085}
@@ -1425,7 +1425,7 @@ Camera:
   far clip plane: 100
   field of view: 60
   orthographic: 1
-  orthographic size: 15
+  orthographic size: 10
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -2578,10 +2578,10 @@ MonoBehaviour:
   enemyPrefab: {fileID: 6294728344263907713, guid: fb384aa801d8b7043806eb080b83da03, type: 3}
   totalWaves: 5
   timeBetweenWaves: 5
-  spawnRadius: 10
-  spawnRadiusMax: 10
-  enemiesFirstWave: 3
-  enemyIncreasePerWave: 2
+  enemySpawnRadiusMin: 55
+  enemySpawnRadiusMax: 80
+  enemiesFirstWave: 15
+  enemyIncreasePerWave: 5
   speedMultiplierPerWave: 1.1
   player: {fileID: 155139138}
   OnWaveStarted:
@@ -2593,17 +2593,20 @@ MonoBehaviour:
   pickupObstructMask:
     serializedVersion: 2
     m_Bits: 704
-  includeTriggerObstacles: 1
   spawnPadding: 0.05
   pickups:
   - prefab: {fileID: 6715750516662286879, guid: a78808309ee20424eabaeb6a1f7223a3, type: 3}
-    spawnChance: 0.2
+    spawnChance: 0.5
     maxPerWave: 1
   - prefab: {fileID: 3177579403384517043, guid: 18177b25d60900d47b51440733971194, type: 3}
-    spawnChance: 0.4
+    spawnChance: 0.5
     maxPerWave: 1
   spawnPickupsOnWaveStart: 0
   spawnPickupsOnWaveEnd: 1
+  pickupSpawnRadiusMin: 1
+  pickupSpawnRadiusMax: 50
+  minKillsForPickup: 6
+  maxKillsForPickup: 15
 --- !u!4 &742328767
 Transform:
   m_ObjectHideFlags: 0

@@ -28,8 +28,6 @@ public abstract class PickupBase : MonoBehaviour
 
     protected abstract void OnPickup(Collider2D player);
 
-
-    // ---------------------- AQUI LA MAGIC --------------------------
     /// <summary>
     /// Devuelve una posición válida (sin colisionar) para spawnear pick-ups
     /// </summary>
