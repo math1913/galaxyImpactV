@@ -19,11 +19,16 @@ public class Health : MonoBehaviour
 
     private bool _isDead;
 
+    private Shield shield; // referencia si el jugador tiene escudo
+
     private void Awake()
     {
         CurrentHealth = maxHealth;
         OnHealthChanged?.Invoke(CurrentHealth, maxHealth);
+
+        shield = GetComponent<Shield>();
     }
+
     public void SetMaxHealth(int newMaxHealth, bool resetCurrent = true)
     {
         maxHealth = Mathf.Max(1, newMaxHealth);
@@ -37,38 +42,55 @@ public class Health : MonoBehaviour
     public void Heal(int amount)
     {
         if (_isDead) return;
-        CurrentHealth = Mathf.Clamp(CurrentHealth + amount, 0, maxHealth); //para que no tenga vida negativa ni mas del max
+        CurrentHealth = Mathf.Clamp(CurrentHealth + amount, 0, maxHealth);
         OnHealthChanged?.Invoke(CurrentHealth, maxHealth);
-        //Debug.Log($"Player HP: {CurrentHealth}/{maxHealth}");
     }
 
     public void TakeDamage(int amount)
     {
         if (_isDead || amount <= 0) return;
-        CurrentHealth = Mathf.Max(0, CurrentHealth - amount);
+
+        int remainingDamage = amount;
+
+        //Primero recibe el daño el escudo si existe
+        if (shield != null && shield.CurrentShield > 0)
+        {
+            int absorbed = shield.AbsorbDamage(remainingDamage);
+            remainingDamage -= absorbed; // lo que queda pasa a la vida
+
+            if (remainingDamage <= 0)
+            {
+                OnDamage?.Invoke(amount); // todo el daño fue absorbido
+                return; // no pasamos a la vida
+            }
+        }
+        
+        //Si todavia queda daño por recibir lo recibe la vida
+        CurrentHealth = Mathf.Max(0, CurrentHealth - remainingDamage);
+
         OnDamage?.Invoke(amount);
         OnHealthChanged?.Invoke(CurrentHealth, maxHealth);
-        //Debug.Log($"Player HP: {CurrentHealth}/{maxHealth}");
+
         if (CurrentHealth == 0)
             Die();
     }
 
-private void Die()
-{
-    if (_isDead) return;
+    private void Die()
+    {
+        if (_isDead) return;
 
-    _isDead = true;
-    OnDeath?.Invoke();
+        _isDead = true;
+        OnDeath?.Invoke();
 
-    if (destroyOnDeath)
-        StartCoroutine(DestroyAfterFrame());
-}
+        if (destroyOnDeath)
+            StartCoroutine(DestroyAfterFrame());
+    }
 
-private IEnumerator DestroyAfterFrame()
-{
-    yield return null; // Espera 1 frame (permite que el HUD procese el evento)
-    Destroy(gameObject);
-}
+    private IEnumerator DestroyAfterFrame()
+    {
+        yield return null;
+        Destroy(gameObject);
+    }
 
     public void ResetHealth()
     {
