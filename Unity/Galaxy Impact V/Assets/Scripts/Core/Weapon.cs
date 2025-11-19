@@ -16,6 +16,11 @@ public class Weapon : MonoBehaviour
     [SerializeField] private float reloadTime = 1.2f;
     [SerializeField, Range(0f, 8f)] private float spreadDeg = 2f;
 
+    [Header("AI Settings")]
+    public bool automaticFire = false;
+    public bool autoReload = false;
+
+
     [Header("Ammo (Total)")]
     [Tooltip("Balas en reserva")]
     [SerializeField] private int totalAmmo = 90;
@@ -41,9 +46,17 @@ public class Weapon : MonoBehaviour
     {
         if (cooldown > 0f) cooldown -= Time.deltaTime;
 
-        if (Input.GetButton("Fire1")) TryFire();
-        if (Input.GetKeyDown(KeyCode.R)) Reload();
+        if (!automaticFire)
+        {
+            if (Input.GetButton("Fire1")) TryFire();
+            if (Input.GetKeyDown(KeyCode.R)) Reload();
+        }
+        else
+        {
+            // Modo enemigo: dispara solo si alguien externo lo ordena (TryFire llamado desde otro script)
+        }
     }
+
 
     public void TryFire()
     {

@@ -21,7 +21,7 @@ TagManager:
   - Bullet
   - Obstacles
   - Pick Ups
-  - 
+  - EnemyBullet
   - 
   - 
   - 
@@ -51,6 +51,9 @@ TagManager:
     locked: 0
   - name: Player
     uniqueID: 1077288577
+    locked: 0
+  - name: Bullets
+    uniqueID: 1789195047
     locked: 0
   m_RenderingLayers:
   - Default

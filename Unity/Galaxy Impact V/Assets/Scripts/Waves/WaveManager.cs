@@ -163,9 +163,7 @@ public class WaveManager : MonoBehaviour
         spawning = false;
     }
 
-    // ============================
     //   SISTEMA 2: PICKUPS POR MUERTES
-    // ============================
     private void HandleEnemyDeath(Vector3 deathPosition)
     {
         enemiesAlive--;
@@ -207,9 +205,7 @@ public class WaveManager : MonoBehaviour
         Instantiate(chosen.prefab, goodPos, Quaternion.identity);
     }
 
-    /// <summary>
     /// Elige un pickup usando spawnChance como peso, filtrando por minWave y prefab válido.
-    /// </summary>
     private PickupEntry ChoosePickupWeighted()
     {
         float totalChance = 0f;
@@ -243,15 +239,13 @@ public class WaveManager : MonoBehaviour
         return null;
     }
 
-    // ============================
     //   SISTEMA 1: PICKUPS POR OLEADA
-    // ============================
     private void SpawnPickupsForWave()
     {
         foreach (var entry in pickups)
         {
             if (entry?.prefab == null) continue;
-            if (entry.minWave > currentWave) continue;         // 🔥 solo si la ronda >= minWave
+            if (entry.minWave > currentWave) continue;         // solo si la ronda >= minWave
             if (Random.value > entry.spawnChance) continue;
             if (entry.maxPerWave <= 0) continue;
 
@@ -269,9 +263,7 @@ public class WaveManager : MonoBehaviour
         }
     }
 
-    // ============================
     //   UTILIDADES / GESTIÓN
-    // ============================
     private Vector3 GetValidSpawn2D(Vector3 candidate, float radius, int tries = 10000)
     {
         while (tries-- > 0)

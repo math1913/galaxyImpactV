@@ -25,6 +25,8 @@ public class Bullet : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        Debug.Log("Bala chocó con: " + other.name + " Layer: " + LayerMask.LayerToName(other.gameObject.layer));
+
         // Filtra por máscara
         if (((1 << other.gameObject.layer) & hitMask) == 0) return;
 
@@ -39,4 +41,5 @@ public class Bullet : MonoBehaviour
         if (pool) pool.Return(gameObject);
         else gameObject.SetActive(false);
     }
+
 }
