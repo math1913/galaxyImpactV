@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -36,9 +37,10 @@ public class User {
     @Column(name = "experiencia")
     private Long experiencia;
 
-    // Relaciones
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Score> puntuaciones;
+    @ElementCollection
+    @CollectionTable(name = "user_puntuaciones", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "puntos")
+    private List<Integer> puntuaciones = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(

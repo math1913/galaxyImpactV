@@ -17,8 +17,8 @@ public class Score {
     @Column(name = "idPuntuacion")
     private Integer idPuntuacion;
 
-    @Column(name = "nivel")
-    private Integer nivel;
+    @Column(name = "nivel") //columna en la base de datos
+    private Integer puntos; // nombre en Java = puntos, columna sigue siendo nivel
 
     @Column(name = "fecha")
     private LocalDateTime fecha;

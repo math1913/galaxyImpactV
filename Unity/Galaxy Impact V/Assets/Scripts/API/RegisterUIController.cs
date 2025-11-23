@@ -28,6 +28,6 @@ public class RegisterUIController : MonoBehaviour
     }
     public void OnBackToLogin()
     {
-    SceneManager.LoadScene("Login");
+    SceneManager.LoadScene("LoginScene");
     }
 }

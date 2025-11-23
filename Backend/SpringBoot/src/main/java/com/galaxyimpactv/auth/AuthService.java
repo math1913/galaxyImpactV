@@ -1,5 +1,5 @@
 package com.galaxyimpactv.auth;
-
+import java.util.Optional;
 import com.galaxyimpactv.model.User;
 import com.galaxyimpactv.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -24,13 +24,13 @@ public class AuthService {
      */
     public boolean login(String username, String password) {
         // Busca el usuario por nombre (usa tu método existente)
-        User user = userRepository.findByUsername(username);
-
-        // Si no existe, login inválido
-        if (user == null) {
-            return false;
+        
+        Optional<User>  optionalUser = userRepository.findByUsername(username);
+        if (optionalUser.isEmpty()) {
+            return false; // Usuario no existe
         }
 
+        User user = optionalUser.get();
         // Compara la contraseña ingresada con el hash guardado
         return passwordEncoder.matches(password, user.getPassword());
     }

@@ -72,7 +72,72 @@ public class AuthService : MonoBehaviour
             return JsonUtility.FromJson<RegisterResponse>(www.downloadHandler.text);
         }
     }
+
+    public async System.Threading.Tasks.Task<User> GetUserById(int idUsuario)
+    {
+        string url = $"http://localhost:8080/api/users/{idUsuario}";
+
+        using (UnityWebRequest www = UnityWebRequest.Get(url))
+        {
+            www.SetRequestHeader("Content-Type", "application/json");
+
+            var op = www.SendWebRequest();
+            while (!op.isDone)
+                await System.Threading.Tasks.Task.Yield();
+
+            Debug.Log("GET USER RESPONSE: " + www.downloadHandler.text);
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError("Error al obtener usuario: " + www.error);
+                return null;
+            }
+
+            return JsonUtility.FromJson<User>(www.downloadHandler.text);
+        }
+    }
+    
+    public async Task<User> UpdateStats(int idUsuario, int kills, int xpEarned)
+    {
+        string url = $"http://localhost:8080/api/users/{idUsuario}/updateStats";
+
+        StatsUpdateRequest req = new StatsUpdateRequest
+        {
+            kills = kills,
+            xpEarned = xpEarned
+        };
+
+        string json = JsonUtility.ToJson(req);
+
+        using (UnityWebRequest www = new UnityWebRequest(url, "POST"))
+        {
+            byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
+            www.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            www.downloadHandler = new DownloadHandlerBuffer();
+            www.SetRequestHeader("Content-Type", "application/json");
+
+            var op = www.SendWebRequest();
+            while (!op.isDone) await Task.Yield();
+
+            Debug.Log("UpdateStats RESPONSE: " + www.downloadHandler.text);
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError("Error en UpdateStats: " + www.error);
+                return null;
+            }
+
+            return JsonUtility.FromJson<User>(www.downloadHandler.text);
+        }
+    }
 }
+[System.Serializable]
+public class StatsUpdateRequest
+{
+    public int kills;
+    public int xpEarned;
+}
+
 
 
 // ============================
@@ -90,6 +155,7 @@ public class LoginRequest
 public class LoginResponse
 {
     public string message;
+    public int id;
     public string user;
     public int status;
 }
@@ -114,3 +180,21 @@ public class RegisterResponse
     public string username;
     public string email;
 }
+
+// ============================
+// User Model
+// ============================
+[System.Serializable]
+public class User
+{
+    public int idUsuario;
+    public string username;
+    public string email;
+    public string password;
+    public string fecha_registro;
+    public int nivelActual;
+    public int experiencia;
+    public int[] puntuaciones;
+    public string[] logros;
+}
+

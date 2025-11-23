@@ -23,6 +23,9 @@ public class LoginUIController : MonoBehaviour
 
         if (response.status == 200)
         {
+        PlayerPrefs.SetInt("userId", response.id);
+        PlayerPrefs.Save();
+
         messageText.text = "Login Correcto";
         SceneManager.LoadScene("MainMenu");
         }
@@ -35,6 +38,6 @@ public class LoginUIController : MonoBehaviour
 
     public void OnRegisterButton()
     {
-        SceneManager.LoadScene("registrer");
+        SceneManager.LoadScene("RegisterScene");
     }
 }

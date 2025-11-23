@@ -5,6 +5,7 @@ import com.galaxyimpactv.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.galaxyimpactv.dto.UpdateStatsRequest;
 
 import java.util.List;
 
@@ -42,5 +43,15 @@ public class UserController {
     public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build(); // 204 sin cuerpo
+    }
+
+    // POST /api/users/{id}/updateStats -> Actualiza estadísticas del usuario
+    @PostMapping("/{id}/updateStats")
+    public ResponseEntity<User> updateUserStats(
+            @PathVariable Integer id,
+            @RequestBody UpdateStatsRequest request) {
+
+        User updated = userService.updateStats(id, request.getKills(), request.getXpEarned());
+        return ResponseEntity.ok(updated);
     }
 }
