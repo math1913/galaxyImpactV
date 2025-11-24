@@ -382,9 +382,9 @@ RectTransform:
   m_Father: {fileID: 482987553}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -2.5, y: 0}
-  m_SizeDelta: {x: -25, y: 0}
+  m_AnchorMax: {x: 0.94333357, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &99188152
 GameObject:
@@ -2763,17 +2763,17 @@ MonoBehaviour:
     spawnChanceEnd: 1
     waveForMaxSpawnChance: 20
   - prefab: {fileID: 770234982362960177, guid: dde3f055f1a889b479fdf7c55f2532a2, type: 3}
-    spawnChance: 0.4
-    minWave: 5
+    spawnChance: 1
+    minWave: 3
     maxPerWave: 100
     cost: 3
     useDynamicSpawnChance: 1
-    spawnChanceStart: 0.1
+    spawnChanceStart: 0.3
     spawnChanceEnd: 0.8
     waveForMaxSpawnChance: 20
   - prefab: {fileID: 3986735916094189297, guid: 1781330b3169dfa418f225a6a1284bbe, type: 3}
-    spawnChance: 0
-    minWave: 3
+    spawnChance: 1
+    minWave: 2
     maxPerWave: 100
     cost: 1
     useDynamicSpawnChance: 1
@@ -2781,13 +2781,13 @@ MonoBehaviour:
     spawnChanceEnd: 0.8
     waveForMaxSpawnChance: 20
   - prefab: {fileID: 1488569542773437076, guid: f03d50cdbab2edc4cba28eb6ced9dc2f, type: 3}
-    spawnChance: 0.4
+    spawnChance: 1
     minWave: 10
     maxPerWave: 100
     cost: 1
     useDynamicSpawnChance: 1
-    spawnChanceStart: 0.1
-    spawnChanceEnd: 0.8
+    spawnChanceStart: 0.2
+    spawnChanceEnd: 0.6
     waveForMaxSpawnChance: 20
   player: {fileID: 155139138}
   OnWaveStarted:
@@ -3055,7 +3055,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.25}
   m_AnchorMax: {x: 1, y: 0.75}
-  m_AnchoredPosition: {x: -4.9999847, y: 0}
+  m_AnchoredPosition: {x: -4.9999695, y: 0}
   m_SizeDelta: {x: -20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &809817079
@@ -4224,12 +4224,12 @@ MonoBehaviour:
   bulletPrefab: {fileID: 2955812645416493260, guid: 86282a3c9bfb6744399e5e521fb3b9d5, type: 3}
   bulletPool: {fileID: 1975873140}
   fireRate: 3
-  magazineSize: 20
+  magazineSize: 30
   reloadTime: 1.2
   spreadDeg: 0.5
   automaticFire: 0
   autoReload: 0
-  totalAmmo: 90
+  totalAmmo: 180
   OnAmmoChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -4270,8 +4270,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -2.5, y: 0}
-  m_SizeDelta: {x: 5.0001, y: 0}
+  m_AnchoredPosition: {x: 0.000030517578, y: 0}
+  m_SizeDelta: {x: 0.000045776, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1477795085
 MonoBehaviour:
