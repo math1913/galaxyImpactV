@@ -142,6 +142,10 @@ public class WaveManager : MonoBehaviour
     [Tooltip("Máximo de muertes antes de que pueda aparecer un pickup.")]
     [SerializeField, Min(1)] private int maxKillsForPickup = 10;
 
+    [Header("Dificultad")]
+    [SerializeField] private DifficultyProfile difficulty;
+
+
     // Estado interno
     private int currentWave = 0;
     private int enemiesAlive = 0;
@@ -158,6 +162,15 @@ public class WaveManager : MonoBehaviour
 
     private void Start()
     {
+        if (difficulty == null)
+            difficulty = Resources.Load<DifficultyProfile>("Difficulty/MediumProfile");
+
+        // Cargar dificultad elegida por el jugador (si existe)
+        string diffName = PlayerPrefs.GetString("Difficulty", "Medium");
+        var loaded = Resources.Load<DifficultyProfile>($"Difficulty/{diffName}Profile");
+        if (loaded != null)
+            difficulty = loaded;
+        Debug.Log("Difficulty loaded: " + difficulty);
         if (!player)
             player = GameObject.FindGameObjectWithTag("Player")?.transform;
 
@@ -195,6 +208,8 @@ public class WaveManager : MonoBehaviour
             int pointsThisWave = pointsFirstWave + (i - 1) * pointsIncreasePerWave;
             if (maxPointsPerWaveCap > 0)
                 pointsThisWave = Mathf.Min(pointsThisWave, maxPointsPerWaveCap);
+            //se ajusta segun la dificultad
+            pointsThisWave = Mathf.RoundToInt(pointsThisWave * difficulty.pointsMultiplier);
 
             yield return StartCoroutine(SpawnWaveWithPoints(pointsThisWave));
             yield return new WaitUntil(() => enemiesAlive <= 0);
@@ -239,6 +254,9 @@ public class WaveManager : MonoBehaviour
 
             // Calculamos el radio máximo actual según la ronda
             float currentMaxRadius = enemySpawnRadiusMax;
+            //ajustamos segun la dificultad
+            currentMaxRadius *= difficulty.spawnRadiusMultiplier;
+
             if (scaleSpawnRadiusWithWave)
             {
                 currentMaxRadius = enemySpawnRadiusMax + spawnRadiusMaxIncreasePerWave * (currentWave - 1);
@@ -283,7 +301,10 @@ public class WaveManager : MonoBehaviour
             // Ajuste de dificultad y suscripción a la muerte
             if (enemy.TryGetComponent<EnemyController>(out var ec))
             {
-                ec.SetDifficultyMultiplier(Mathf.Pow(speedMultiplierPerWave, currentWave - 1));
+                float baseMultiplier = Mathf.Pow(speedMultiplierPerWave, currentWave - 1);
+                baseMultiplier *= difficulty.enemySpeedMultiplier;
+                
+                ec.SetDifficultyMultiplier(baseMultiplier);
 
                 Transform enemyTransform = enemy.transform;
 
@@ -292,7 +313,6 @@ public class WaveManager : MonoBehaviour
                     HandleEnemyDeath(enemyTransform.position);
                 });
             }
-
             // Pequeño delay entre spawns
             yield return new WaitForSeconds(0.3f);
         }
@@ -415,7 +435,7 @@ public class WaveManager : MonoBehaviour
             if (e.minWave > currentWave) continue;
             if (e.spawnChance <= 0f) continue;
 
-            totalChance += e.spawnChance;
+            totalChance += e.spawnChance * difficulty.pickupSpawnChanceMultiplier;
         }
 
         if (totalChance <= 0f)
@@ -430,7 +450,7 @@ public class WaveManager : MonoBehaviour
             if (e.minWave > currentWave) continue;
             if (e.spawnChance <= 0f) continue;
 
-            accum += e.spawnChance;
+            accum += e.spawnChance * difficulty.pickupSpawnChanceMultiplier;
             if (roll <= accum)
                 return e;
         }
@@ -445,10 +465,14 @@ public class WaveManager : MonoBehaviour
         {
             if (entry?.prefab == null) continue;
             if (entry.minWave > currentWave) continue;         // solo si la ronda >= minWave
-            if (Random.value > entry.spawnChance) continue;
+            if (Random.value > entry.spawnChance * difficulty.pickupSpawnChanceMultiplier) continue;
             if (entry.maxPerWave <= 0) continue;
 
-            int count = Random.Range(1, entry.maxPerWave + 1);
+            int count = Random.Range(
+                1,
+                Mathf.RoundToInt(entry.maxPerWave * difficulty.pickupAmountMultiplier) + 1
+            );
+
 
             for (int i = 0; i < count; i++)
             {
