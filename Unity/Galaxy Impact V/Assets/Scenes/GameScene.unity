@@ -3278,7 +3278,7 @@ MonoBehaviour:
     waveForMaxSpawnChance: 20
   - prefab: {fileID: 3986735916094189297, guid: 1781330b3169dfa418f225a6a1284bbe, type: 3}
     spawnChance: 1
-    minWave: 2
+    minWave: 7
     maxPerWave: 100
     cost: 1
     useDynamicSpawnChance: 1
