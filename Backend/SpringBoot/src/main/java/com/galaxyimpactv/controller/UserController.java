@@ -25,7 +25,7 @@ public class UserController {
 
     // GET /api/users/{id} -> Devuelve un usuario por ID
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Integer id) {
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
         return userService.getUserById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build()); // 404 si no existe
@@ -40,7 +40,7 @@ public class UserController {
 
     // DELETE /api/users/{id} -> Elimina un usuario
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build(); // 204 sin cuerpo
     }
@@ -48,7 +48,7 @@ public class UserController {
     // POST /api/users/{id}/updateStats -> Actualiza estadísticas del usuario
     @PostMapping("/{id}/updateStats")
     public ResponseEntity<User> updateUserStats(
-            @PathVariable Integer id,
+            @PathVariable Long id,
             @RequestBody UpdateStatsRequest request) {
 
         User updated = userService.updateStats(id, request.getKills(), request.getXpEarned());

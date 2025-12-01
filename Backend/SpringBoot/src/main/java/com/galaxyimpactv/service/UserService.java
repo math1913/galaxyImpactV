@@ -27,7 +27,7 @@ public class UserService {
     }
 
     // Busca un usuario por su ID
-    public Optional<User> getUserById(Integer id) {
+    public Optional<User> getUserById(Long id) {
         return userRepository.findById(id);
     }
 
@@ -42,7 +42,7 @@ public class UserService {
     }
 
     // Elimina un usuario por su ID
-    public void deleteUser(Integer id) {
+    public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
 
@@ -54,7 +54,7 @@ public class UserService {
         return (int) Math.floor(Math.sqrt(experiencia / 50.0)) + 1;
     }
 
-    public User updateStats(Integer id, int kills, long xpEarned) {
+    public User updateStats(Long id, int kills, long xpEarned) {
 
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));

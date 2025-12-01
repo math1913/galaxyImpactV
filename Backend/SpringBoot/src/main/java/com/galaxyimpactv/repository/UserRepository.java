@@ -8,8 +8,8 @@ import org.springframework.stereotype.Repository;
 // Esta interfaz es la "puerta" hacia la base de datos.
 // Extiende JpaRepository,que tiene metodos para listar, buscar, crear/actualizar y borrar
 @Repository
-public interface UserRepository extends JpaRepository<User, Integer> {
+public interface UserRepository extends JpaRepository<User, Long> {
 
     // Podemos definir métodos personalizados si queremos (Spring genera las consultas automáticamente)
     Optional<User> findByUsername(String username);
-}
+}   

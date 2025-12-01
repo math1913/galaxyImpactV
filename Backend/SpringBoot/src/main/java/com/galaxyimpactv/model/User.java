@@ -2,13 +2,12 @@ package com.galaxyimpactv.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "usuario") // nombre real de la tabla en MySQL
+@Table(name = "usuario")
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @Builder
@@ -19,17 +18,17 @@ public class User {
     @Column(name = "idUsuario")
     private Long idUsuario;
 
-    @Column(name = "username", nullable = false, unique = true)
+    @Column(name = "username", nullable = false, unique = true, length = 255)
     private String username;
 
-    @Column(name = "email", nullable = false, unique = true)
+    @Column(name = "email", nullable = false, unique = true, length = 255)
     private String email;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "password", nullable = false, length = 255)
     private String password;
 
-    @Column(name = "fecha_registro")
-    private LocalDateTime fecha_registro;
+    @Column(name = "fecha_registro", insertable = false, updatable = false)
+    private LocalDateTime fechaRegistro;
 
     @Column(name = "nivelActual")
     private Integer nivelActual;
@@ -37,16 +36,16 @@ public class User {
     @Column(name = "experiencia")
     private Long experiencia;
 
+    // ✅ Mantener puntuaciones
     @ElementCollection
-    @CollectionTable(name = "user_puntuaciones", joinColumns = @JoinColumn(name = "user_id"))
+    @CollectionTable(
+            name = "user_puntuaciones",
+            joinColumns = @JoinColumn(name = "user_id")
+    )
     @Column(name = "puntos")
     private List<Integer> puntuaciones = new ArrayList<>();
 
-    @ManyToMany
-    @JoinTable(
-            name = "usuario_logro",
-            joinColumns = @JoinColumn(name = "FK_idUsuario"),
-            inverseJoinColumns = @JoinColumn(name = "FK_idLogro")
-    )
-    private List<Achievement> logros;
+    // Relación con logros
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UsuarioLogro> usuarioLogros = new ArrayList<>();
 }

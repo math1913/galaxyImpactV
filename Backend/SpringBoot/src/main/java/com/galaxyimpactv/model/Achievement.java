@@ -1,9 +1,8 @@
 package com.galaxyimpactv.model;
 
-import java.util.List;
-
 import jakarta.persistence.*;
 import lombok.*;
+import java.util.List;
 
 @Entity
 @Table(name = "logro")
@@ -17,15 +16,21 @@ public class Achievement {
     @Column(name = "idLogro")
     private Long idLogro;
 
+    @Column(name = "codigo", length = 100)
+    private String codigo;
+
     @Column(name = "nombre", nullable = false, length = 100)
     private String nombre;
 
-    @Column(name = "descripcion", columnDefinition = "TEXT")
+    @Column(name = "descripcion", length = 255)
     private String descripcion;
+
+    @Column(name = "objetivo", nullable = false)
+    private Long objetivo;
 
     @Column(name = "puntosRecompensa")
     private Long puntosRecompensa;
 
-    @ManyToMany(mappedBy = "logros")
-    private List<User> usuario;
+    @OneToMany(mappedBy = "logro", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UsuarioLogro> usuarioLogros;
 }
