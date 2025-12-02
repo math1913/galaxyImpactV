@@ -20,5 +20,14 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/GameScene.unity
     guid: 5bd8ad464ca2e89408f39c919318cf98
+  - enabled: 1
+    path: Assets/Scenes/Achievements.unity
+    guid: 2bd382e32ae399a4683396c6e5310632
+  - enabled: 1
+    path: Assets/Scenes/Inicio.unity
+    guid: 8494a6fc42ee28b429ef36532602779f
+  - enabled: 1
+    path: Assets/Scenes/Settings.unity
+    guid: da059b63e28f2da4584c98569af68ef3
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

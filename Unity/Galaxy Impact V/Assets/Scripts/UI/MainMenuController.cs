@@ -88,7 +88,7 @@ public class MainMenuController : MonoBehaviour
 
     public void OnLogros()
     {
-        SceneManager.LoadScene("LogrosMenu");
+        SceneManager.LoadScene("Achievements");
     }
 
     public void OnLogout()
