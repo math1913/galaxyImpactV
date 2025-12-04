@@ -190,6 +190,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80510ce04b2f98e4e995ae4b8171a1a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemyType: 3
   contactDamage: 10
   touchCooldown: 0.5
   moveSpeed: 1
@@ -199,6 +200,7 @@ MonoBehaviour:
       m_Calls: []
   rotationSpeed: 10
   visualToRotate: {fileID: 0}
+  xpOnDeath: 5
 --- !u!114 &1472192763033594836
 MonoBehaviour:
   m_ObjectHideFlags: 0

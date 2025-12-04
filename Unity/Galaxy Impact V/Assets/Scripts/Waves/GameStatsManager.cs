@@ -10,6 +10,20 @@ public class GameStatsManager : MonoBehaviour
     public AuthService authService;   // Asignar en el inspector
 
     [Header("Stats de esta partida")]
+    public int killsNormal = 0;
+    public int killsFast = 0;
+    public int killsTank = 0;
+    public int killsShooter = 0;
+
+    public int minutesPlayed = 0;
+    public float timePlayed = 0f;
+
+    public int pickupHealth = 0;
+    public int pickupShield = 0;
+    public int pickupAmmo = 0;
+    public int pickupExp = 0;
+
+    public int scoreThisRun = 0;
     public int killsThisRun = 0;
     public int xpThisRun = 0;
 
@@ -33,11 +47,20 @@ public class GameStatsManager : MonoBehaviour
     }
 
     // ======= KILLS & XP =======
-    public void RegisterKill(int xpGained)
+    public void RegisterKill(EnemyController.EnemyType tipo, int xpGained)
     {
+        switch(tipo)
+        {
+            case EnemyController.EnemyType.Normal: killsNormal++; break;
+            case EnemyController.EnemyType.Fast: killsFast++; break;
+            case EnemyController.EnemyType.Tank: killsTank++; break;
+            case EnemyController.EnemyType.Shooter: killsShooter++; break;
+        }
         killsThisRun++;
         xpThisRun += xpGained;
         // Debug.Log($"Kill registrada. XP +{xpGained}. Totales: Kills={killsThisRun}, XP={xpThisRun}");
+        Debug.Log($"[KILL] Tipo: {tipo} | " +
+              $"Normal={killsNormal}, Speed={killsFast}, Tank={killsTank}, Shooter={killsShooter}");
     }
 
     public void AddXP(int amount)
@@ -49,6 +72,7 @@ public class GameStatsManager : MonoBehaviour
     // ======= XP por ronda =======
     public void OnWaveCompleted(int waveNumber)
     {
+        waveCompleted = waveNumber;
         // XP fija por oleada
         xpThisRun += xpPerWave;
 
@@ -64,6 +88,7 @@ public class GameStatsManager : MonoBehaviour
     // ======= Al morir el player / terminar partida =======
     public async void EndRunAndSendToApi()
     {
+        score = xpThisRun;
         int userId = PlayerPrefs.GetInt("userId", -1);
         if (userId == -1)
         {
@@ -75,14 +100,50 @@ public class GameStatsManager : MonoBehaviour
         Debug.Log($"Enviando stats a API: kills={killsThisRun}, xpThisRun={xpThisRun}");
 
         var updatedUser = await authService.UpdateStats(userId, killsThisRun, xpThisRun);
+        var batch = new AchievementAPIClient.AchievementBatchRequest {
+            userId = userId,
+            killsNormal = killsNormal,
+            killsFast = killsFast,
+            killsTank = killsTank,
+            killsShooter = killsShooter,
+            minutesPlayed = minutesPlayed,
+            score = scoreThisRun,
+            pickupHealth = pickupHealth,
+            pickupShield = pickupShield,
+            pickupAmmo = pickupAmmo,
+            pickupExp = pickupExp
+        };
+
+    await AchievementAPIClient.Instance.SendBatch(batch);
 
         if (updatedUser == null)
         {
             Debug.LogError("Error al actualizar stats en la API");
         }
+        killsThisRun = 0;
 
-        // Reseteamos stats de la partida actual
+        xpThisRun = 0;
+        Debug.Log("Logros actualizados en backend.");
+
+        killsNormal = 0;
+        killsFast = 0;
+        killsTank = 0;
+        killsShooter = 0;
+
+        pickupHealth = 0;
+        pickupShield = 0;
+        pickupAmmo = 0;
+        pickupExp = 0;
+
+        scoreThisRun = 0;
+
         killsThisRun = 0;
         xpThisRun = 0;
+
+        SceneManager.LoadScene("MainMenu");
+    }
+    private void Update()
+    {
+        timePlayed += Time.deltaTime;
     }
 }

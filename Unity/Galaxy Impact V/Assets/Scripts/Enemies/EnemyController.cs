@@ -1,9 +1,22 @@
+
 using UnityEngine;
 using Pathfinding;
+
+
+
 
 [RequireComponent(typeof(Collider2D))]
 public class EnemyController : MonoBehaviour
 {
+    public enum EnemyType
+    {
+        Normal,
+        Fast,
+        Tank,
+        Shooter
+    }
+    [SerializeField] private EnemyType enemyType;
+    public EnemyType Type => enemyType;
     [Header("Daño por contacto")]
     [SerializeField] private int contactDamage = 10;
     [SerializeField] private float touchCooldown = 0.5f;
@@ -21,6 +34,9 @@ public class EnemyController : MonoBehaviour
     private AIDestinationSetter destSetter;
     private Transform target;
     [SerializeField] private int xpOnDeath = 5; // set en inspector por tipo
+
+
+
     private void Awake()
     {
         if (!health) health = GetComponent<Health>();
@@ -29,9 +45,9 @@ public class EnemyController : MonoBehaviour
             health.OnDeath.AddListener(() => 
             {
                 OnDeath.Invoke();
-                    // REGISTRO DE KILL + XP
-                if (GameStatsManager.Instance != null)
-                    GameStatsManager.Instance.RegisterKill(xpOnDeath);
+                if (GameStatsManager.Instance != null){
+                    GameStatsManager.Instance.RegisterKill(enemyType, xpOnDeath); //guarda la kill de ese tipo de enemigo y la xp
+                }
             });
         destSetter = GetComponent<AIDestinationSetter>();
 
@@ -65,12 +81,6 @@ public class EnemyController : MonoBehaviour
 
         float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
 
-        // IMPORTANTE:
-        // - si tu sprite "mira" hacia la derecha, deja esto tal cual
-        // - si tu sprite "mira" hacia arriba, pon: angle -= 90f;
-
-        // angle -= 90f; // <- descomenta esta línea si el sprite mira hacia arriba en el editor
-
         Quaternion desiredRot = Quaternion.AngleAxis(angle, Vector3.forward);
         visualToRotate.rotation = Quaternion.Lerp(
             visualToRotate.rotation,
@@ -95,12 +105,12 @@ public class EnemyController : MonoBehaviour
     public void SetDifficultyMultiplier(float multiplier)
     {
         moveSpeed *= multiplier;
-
-        // Ahora sincronizamos con el componente de pathfinding
         var ai = GetComponent<IAstarAI>(); // funciona con AIPath o AILerp
         if (ai != null)
         {
             ai.maxSpeed = moveSpeed;
         }
     }
+
+
 }

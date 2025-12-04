@@ -7,7 +7,23 @@ using UnityEngine.Networking;
 
 public class AchievementAPIClient : MonoBehaviour
 {
+    public static AchievementAPIClient Instance; // ← Singleton opcional
+
     public string baseUrl = "http://localhost:8080/api/achievements";
+
+    private void Awake()
+    {
+        // Inicializar Singleton
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     // ---------- MODELO REQUEST PARA updateBatch ----------
     [Serializable]
@@ -49,7 +65,7 @@ public class AchievementAPIClient : MonoBehaviour
     }
 
     // ============================================================
-    // POST /updateBatch
+    // POST /updateBatch  (Método correcto)
     // ============================================================
     public async Task<bool> SendBatch(AchievementBatchRequest batch)
     {
@@ -97,10 +113,9 @@ public class AchievementAPIClient : MonoBehaviour
             return null;
         }
 
-        // JSON es un array → necesitamos un wrapper para JsonUtility
         string rawJson = req.downloadHandler.text;
 
-        // JsonUtility no soporta arrays directos → envolvemos
+        // JsonUtility no soporta arrays directos → se envuelve
         string wrapped = "{\"items\":" + rawJson + "}";
         AchievementListWrapper wrapper = JsonUtility.FromJson<AchievementListWrapper>(wrapped);
 

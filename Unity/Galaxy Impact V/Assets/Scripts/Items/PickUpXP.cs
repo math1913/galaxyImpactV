@@ -1,20 +1,18 @@
 using UnityEngine;
 
-public class PickupXP : MonoBehaviour
+public class PickupXP : PickupBase
 {
-    public int xpAmount = 20;
+    [SerializeField] private int xpAmount = 20;
 
-    private void OnTriggerEnter2D(Collider2D other)
+    protected override void OnPickup(Collider2D player)
     {
-        if (!other.CompareTag("Player"))
-            return;
-
         if (GameStatsManager.Instance != null)
         {
             GameStatsManager.Instance.AddXP(xpAmount);
         }
-
-        // Aquí puedes reproducir sonido, partículas, etc
-        Destroy(gameObject);
+        else
+        {
+            Debug.LogWarning("PickupXP: No se encontró GameStatsManager.Instance.");
+        }
     }
 }
