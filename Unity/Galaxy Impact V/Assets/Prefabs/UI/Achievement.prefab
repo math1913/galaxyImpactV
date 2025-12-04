@@ -151,7 +151,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.8}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -200,14 +200,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17f9855f0aae48d42a5394dee5f84cfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  icon: {fileID: 8553945433385715764}
-  panel: {fileID: 5086161476732273734}
+  bordePanel: {fileID: 5459913010397975807}
+  fondoCompleto: {fileID: 5086161476732273734}
   title: {fileID: 8252188209198216218}
   descripcion: {fileID: 3890776931425314942}
   sliderProgreso: {fileID: 3269041972900654606}
   txtProgreso: {fileID: 3554650297766189543}
-  colorNormal: {r: 0.2574, g: 0.3, b: 0.2684877, a: 1}
-  colorCompletado: {r: 0.38117644, g: 0.9529412, b: 0.53033245, a: 0.8}
+  colorDefault: {r: 0.58431375, g: 0.64705884, b: 0.6509804, a: 1}
+  colorCompletado: {r: 1, g: 1, b: 1, a: 1}
+  killNormal: {r: 1, g: 0.41960785, b: 0.41960785, a: 1}
+  killFast: {r: 1, g: 0.5686275, b: 0.3019608, a: 1}
+  killTank: {r: 0.7529412, g: 0.22352941, b: 0.16862746, a: 1}
+  killShooter: {r: 0.6392157, g: 0.2, b: 0.78431374, a: 1}
+  killTotal: {r: 0.9098039, g: 0.25490198, b: 0.09411765, a: 1}
+  wavesTotal: {r: 0.20392157, g: 0.59607846, b: 0.85882354, a: 1}
+  timeSurvive: {r: 0.5568628, g: 0.26666668, b: 0.6784314, a: 1}
+  scoreSingle: {r: 0.94509804, g: 0.76862746, b: 0.05882353, a: 1}
+  pickupHealth: {r: 0.18039216, g: 0.8, b: 0.44313726, a: 1}
+  pickupShield: {r: 0.3647059, g: 0.6784314, b: 0.8862745, a: 1}
+  pickupAmmo: {r: 0.9529412, g: 0.6117647, b: 0.07058824, a: 1}
+  pickupExp: {r: 0.15294118, g: 0.68235296, b: 0.3764706, a: 1}
+  levelReach: {r: 0.101960786, g: 0.7372549, b: 0.6117647, a: 1}
 --- !u!1 &2656493192034331978
 GameObject:
   m_ObjectHideFlags: 0
@@ -220,7 +233,7 @@ GameObject:
   - component: {fileID: 7289194925607552184}
   - component: {fileID: 5459913010397975807}
   m_Layer: 5
-  m_Name: Panel
+  m_Name: BordePanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -270,7 +283,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.38039216, g: 0.9529412, b: 0.5294118, a: 1}
+  m_Color: {r: 0, g: 1, b: 0.26027393, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

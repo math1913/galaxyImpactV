@@ -35,8 +35,13 @@ public class UserController {
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User user) {
         User savedUser = userService.saveUser(user);
-        return ResponseEntity.ok(savedUser); // 200 OK con el usuario guardado
+
+        // Inicializar todos los logros del usuario
+        userService.initializeUserAchievements(savedUser);
+
+        return ResponseEntity.ok(savedUser);
     }
+
 
     // DELETE /api/users/{id} -> Elimina un usuario
     @DeleteMapping("/{id}")

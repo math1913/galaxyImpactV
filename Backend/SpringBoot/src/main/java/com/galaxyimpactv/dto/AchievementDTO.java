@@ -1,5 +1,10 @@
 package com.galaxyimpactv.dto;
 
+import java.time.LocalDateTime;
+
+import com.galaxyimpactv.model.Achievement;
+import com.galaxyimpactv.model.UsuarioLogro;
+
 import lombok.*;
 
 @Getter @Setter
@@ -14,5 +19,8 @@ public class AchievementDTO {
     private Long objetivo;
     private Boolean completado;
     private Long puntosRecompensa;
-    private String fechaDesbloqueo;
+    private LocalDateTime fechaDesbloqueo;
+    private String categoria;
+    private String tipo;
+
 }

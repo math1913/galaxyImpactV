@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 public class PlayerDeathHandler : MonoBehaviour
 {
     private Health health;
@@ -13,6 +13,8 @@ public class PlayerDeathHandler : MonoBehaviour
 
     private void OnPlayerDeath()
     {
+        
+        SceneManager.LoadScene("GameOver");
         Debug.Log("El jugador ha muerto. Enviando stats a la API...");
 
         if (GameStatsManager.Instance != null)

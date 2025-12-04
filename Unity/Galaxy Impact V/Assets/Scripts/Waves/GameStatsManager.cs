@@ -84,7 +84,5 @@ public class GameStatsManager : MonoBehaviour
         // Reseteamos stats de la partida actual
         killsThisRun = 0;
         xpThisRun = 0;
-
-        SceneManager.LoadScene("MainMenu");
     }
 }

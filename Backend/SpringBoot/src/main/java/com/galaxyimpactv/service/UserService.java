@@ -1,8 +1,13 @@
 package com.galaxyimpactv.service;
 
+import com.galaxyimpactv.model.Achievement;
 import com.galaxyimpactv.model.Score;
 import com.galaxyimpactv.model.User;
+import com.galaxyimpactv.model.UsuarioLogro;
+import com.galaxyimpactv.repository.AchievementRepository;
 import com.galaxyimpactv.repository.UserRepository;
+import com.galaxyimpactv.repository.UsuarioLogroRepository;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,6 +25,9 @@ public class UserService {
     private final UserRepository userRepository;
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    private final AchievementRepository achievementRepository;
+    private final UsuarioLogroRepository usuarioLogroRepository;
 
     // Devuelve todos los usuarios de la base de datos
     public List<User> getAllUsers() {
@@ -40,7 +48,26 @@ public class UserService {
         // Guarda el usuario con la contraseña ya encriptada
         return userRepository.save(user);
     }
+    
+    public void initializeUserAchievements(User user) {
 
+        List<Achievement> allAchievements = achievementRepository.findAll();
+
+        for (Achievement logro : allAchievements) {
+            UsuarioLogro ul = UsuarioLogro.builder()
+                    .usuario(user)
+                    .logro(logro)
+                    .progresoActual(0L)
+                    .completado(false)
+                    .fechaDesbloqueo(null)
+                    .build();
+
+            usuarioLogroRepository.save(ul);
+        }
+
+        System.out.println("Logros inicializados para usuario ID=" + user.getIdUsuario());
+    }
+    
     // Elimina un usuario por su ID
     public void deleteUser(Long id) {
         userRepository.deleteById(id);

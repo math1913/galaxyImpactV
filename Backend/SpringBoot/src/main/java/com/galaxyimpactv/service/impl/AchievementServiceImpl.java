@@ -10,7 +10,7 @@ import com.galaxyimpactv.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
+import java.util.Comparator;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,6 +23,14 @@ public class AchievementServiceImpl implements AchievementService {
     private final AchievementRepository achievementRepository;
     private final UsuarioLogroRepository usuarioLogroRepository;
     private final UserService userService;
+	private static final List<String> CATEGORIA_ORDEN = List.of(
+			"KILL",
+			"WAVES",
+			"TIME",
+			"SCORE",
+			"PICKUP",
+			"LEVEL"
+	);
 
 	@Override
 	public void addProgress(Long userId, String codigoLogro, long amount) {
@@ -65,31 +73,54 @@ public class AchievementServiceImpl implements AchievementService {
     usuarioLogroRepository.save(usuarioLogro);
     }
 
+	private AchievementDTO mapToDTO(UsuarioLogro ul) {
 
+		Achievement logro = ul.getLogro();
+		String[] partes = logro.getCodigo().split("_");
+
+		String categoria = partes.length > 0 ? partes[0] : "GENERAL";
+		String tipo      = partes.length > 1 ? partes[1] : "NONE";
+
+		return AchievementDTO.builder()
+				.codigo(logro.getCodigo())
+				.nombre(logro.getNombre())
+				.descripcion(logro.getDescripcion())
+				.objetivo(logro.getObjetivo())
+				.progresoActual(ul.getProgresoActual())
+				.completado(ul.getCompletado())
+				.puntosRecompensa(logro.getPuntosRecompensa())
+				.fechaDesbloqueo(ul.getFechaDesbloqueo())
+				.categoria(categoria)
+				.tipo(tipo)
+				.build();
+	}
     @Override
-    public List<AchievementDTO> getLogrosUsuario(Long userId) {
+	public List<AchievementDTO> getLogrosUsuario(Long idUser) {
 
-        User usuario = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+		// 1) Cargar el usuario (necesario para el findByUsuario)
+		User usuario = userRepository.findById(idUser)
+				.orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + idUser));
 
-        List<UsuarioLogro> lista = usuarioLogroRepository.findByUsuario(usuario);
+		// 2) Obtener todos los usuario_logro del usuario
+		List<UsuarioLogro> lista = usuarioLogroRepository.findByUsuario(usuario);
 
-        return lista.stream()
-                .map(ul -> AchievementDTO.builder()
-                        .codigo(ul.getLogro().getCodigo())
-                        .nombre(ul.getLogro().getNombre())
-                        .descripcion(ul.getLogro().getDescripcion())
-                        .progresoActual(ul.getProgresoActual())
-                        .objetivo(ul.getLogro().getObjetivo())
-                        .completado(ul.getCompletado())
-                        .puntosRecompensa(ul.getLogro().getPuntosRecompensa())
-                        .fechaDesbloqueo(
-                                ul.getFechaDesbloqueo() != null ? ul.getFechaDesbloqueo().toString() : null
-                        )
-                        .build()
-                )
-                .collect(Collectors.toList());
-    }
+		// 3) Convertir a DTOs
+		List<AchievementDTO> dtos = lista.stream()
+				.map(this::mapToDTO)
+				.collect(Collectors.toList());
+
+		// 4) Ordenar logros según reglas
+		dtos.sort(
+			Comparator
+				.comparing((AchievementDTO dto) -> CATEGORIA_ORDEN.indexOf(dto.getCategoria()))
+				.thenComparing(AchievementDTO::getTipo)
+				.thenComparing(dto -> extractLastNumber(dto.getCodigo()))
+		);
+
+		return dtos;
+	}
+
+
 	@Override
 	public void processBatch(AchievementBatchRequest r) {
 
@@ -151,5 +182,10 @@ public class AchievementServiceImpl implements AchievementService {
 		addProgress(userId, "PICKUP_EXP_200", r.getPickupExp());
 		addProgress(userId, "PICKUP_EXP_500", r.getPickupExp());
 	}
+	private int extractLastNumber(String code) {
+		String[] parts = code.split("_");
+		return Integer.parseInt(parts[parts.length - 1]);
+	}
+
 
 }
