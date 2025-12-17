@@ -23,7 +23,7 @@ public class Weapon : MonoBehaviour
 
     [Header("Ammo (Total)")]
     [Tooltip("Balas en reserva")]
-    [SerializeField] private int totalAmmo = 90;
+    [SerializeField] private int totalAmmo = 99999999;
     public int TotalAmmo { get; private set; }   // reserva actual
 
     public int CurrentAmmo { get; private set; }

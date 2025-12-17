@@ -19,4 +19,6 @@ public class AchievementBatchRequest {
     private long pickupShield;
     private long pickupAmmo;
     private long pickupExp;
+
+    private int wavesCompleted;
 }

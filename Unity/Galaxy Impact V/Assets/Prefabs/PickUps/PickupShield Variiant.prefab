@@ -8,26 +8,42 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1569475013077991933, guid: de31eb19a1b82754089388cad212568a, type: 3}
+      propertyPath: MinDistance
+      value: 1.3471367
+      objectReference: {fileID: 0}
     - target: {fileID: 1720941373393447863, guid: de31eb19a1b82754089388cad212568a, type: 3}
       propertyPath: m_Name
       value: PickupShield Variiant
       objectReference: {fileID: 0}
     - target: {fileID: 3100050095606771687, guid: de31eb19a1b82754089388cad212568a, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 2389193319765324094, guid: f9cd8c91675b3cf4b8ef6bc0ff8a60dd, type: 3}
+    - target: {fileID: 3100050095606771687, guid: de31eb19a1b82754089388cad212568a, type: 3}
       propertyPath: m_Color.b
-      value: 0.8867924
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3100050095606771687, guid: de31eb19a1b82754089388cad212568a, type: 3}
       propertyPath: m_Color.g
-      value: 0.6357676
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3100050095606771687, guid: de31eb19a1b82754089388cad212568a, type: 3}
       propertyPath: m_Color.r
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3100050095606771687, guid: de31eb19a1b82754089388cad212568a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+    - target: {fileID: 4146463334993499096, guid: de31eb19a1b82754089388cad212568a, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.125
+      objectReference: {fileID: 0}
+    - target: {fileID: 4146463334993499096, guid: de31eb19a1b82754089388cad212568a, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.125
+      objectReference: {fileID: 0}
     - target: {fileID: 4146463334993499096, guid: de31eb19a1b82754089388cad212568a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -67,6 +83,10 @@ PrefabInstance:
     - target: {fileID: 4146463334993499096, guid: de31eb19a1b82754089388cad212568a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9148779053073614022, guid: de31eb19a1b82754089388cad212568a, type: 3}
+      propertyPath: m_Radius
+      value: 3.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

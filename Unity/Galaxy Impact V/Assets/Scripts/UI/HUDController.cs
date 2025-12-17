@@ -76,7 +76,7 @@ public class HUDController : MonoBehaviour
     private void OnHealthChanged(int current, int max)
     {
         if (healthText)
-            healthText.text = $"HP: {current}/{max}";
+            healthText.text = $"{current} | {max}";
 
         if (healthBar)
             healthBar.value = (float)current / max;
@@ -88,7 +88,7 @@ public class HUDController : MonoBehaviour
     private void OnShieldChanged(int current, int max)
     {
         if (shieldText)
-            shieldText.text = $"SHD: {current}/{max}";
+            shieldText.text = $"{current} |  {max}";
 
         if (shieldBar)
             shieldBar.value = (float)current / max;
@@ -109,8 +109,8 @@ public class HUDController : MonoBehaviour
         int total = playerWeapon.TotalAmmo;
 
         ammoText.text = playerWeapon.IsReloading
-            ? "Reloading..."
-            : $"Ammo: {current} / {total}";
+            ? $"{current}\nReloading..."
+            : $"{current}";
     }
 
 

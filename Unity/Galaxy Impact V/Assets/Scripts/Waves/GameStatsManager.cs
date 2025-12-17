@@ -26,6 +26,8 @@ public class GameStatsManager : MonoBehaviour
     public int scoreThisRun = 0;
     public int killsThisRun = 0;
     public int xpThisRun = 0;
+    public int wavesCompleted = 0;
+
 
     [Header("Config XP por ronda")]
     [Tooltip("XP base que se da al completar cada ronda.")]
@@ -72,7 +74,7 @@ public class GameStatsManager : MonoBehaviour
     // ======= XP por ronda =======
     public void OnWaveCompleted(int waveNumber)
     {
-        waveCompleted = waveNumber;
+        wavesCompleted = waveNumber;
         // XP fija por oleada
         xpThisRun += xpPerWave;
 
@@ -85,45 +87,74 @@ public class GameStatsManager : MonoBehaviour
         // Debug.Log($"Wave {waveNumber} completada. XP total run = {xpThisRun}");
     }
 
-    // ======= Al morir el player / terminar partida =======
-    public async void EndRunAndSendToApi()
+    public async Task EndRunAndSendToApi()
     {
-        score = xpThisRun;
+        // ===== SNAPSHOT DE DATOS (ya no dependemos de la escena) =====
         int userId = PlayerPrefs.GetInt("userId", -1);
-        if (userId == -1)
+        int kills = killsThisRun;
+        int xp = xpThisRun;
+        int score = xpThisRun;
+        int minutes = Mathf.FloorToInt(timePlayed / 60f);
+
+        var batch = new AchievementAPIClient.AchievementBatchRequest
         {
-            Debug.LogWarning("No hay userId en PlayerPrefs. No se puede enviar stats.");
-            SceneManager.LoadScene("Login");
-            return;
-        }
-
-        Debug.Log($"Enviando stats a API: kills={killsThisRun}, xpThisRun={xpThisRun}");
-
-        var updatedUser = await authService.UpdateStats(userId, killsThisRun, xpThisRun);
-        var batch = new AchievementAPIClient.AchievementBatchRequest {
             userId = userId,
             killsNormal = killsNormal,
             killsFast = killsFast,
             killsTank = killsTank,
             killsShooter = killsShooter,
-            minutesPlayed = minutesPlayed,
-            score = scoreThisRun,
+            minutesPlayed = minutes,
+            score = score,
             pickupHealth = pickupHealth,
             pickupShield = pickupShield,
             pickupAmmo = pickupAmmo,
-            pickupExp = pickupExp
+            pickupExp = pickupExp,
+            wavesCompleted = wavesCompleted
         };
 
-    await AchievementAPIClient.Instance.SendBatch(batch);
+        // ===== CAMBIO DE ESCENA INMEDIATO =====
+        SceneManager.LoadScene("GameOver");
 
-        if (updatedUser == null)
+        // ===== VALIDACIONES =====
+        if (userId == -1)
         {
-            Debug.LogError("Error al actualizar stats en la API");
+            Debug.LogWarning("No hay userId. Stats no enviados.");
+            return;
         }
-        killsThisRun = 0;
 
+        try
+        {
+            // Actualizar stats básicos
+            if (authService != null)
+            {
+                await authService.UpdateStats(userId, kills, xp);
+            }
+            else
+            {
+                Debug.LogWarning("authService es null");
+            }
+
+            // Enviar logros
+            if (AchievementAPIClient.Instance != null)
+            {
+                await AchievementAPIClient.Instance.SendBatch(batch);
+                Debug.Log("Logros enviados correctamente.");
+            }
+            else
+            {
+                Debug.LogWarning("AchievementAPIClient.Instance es null");
+            }
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError("Error enviando stats: " + e);
+        }
+    }
+
+    public void ResetRunStats()
+    {
+        killsThisRun = 0;
         xpThisRun = 0;
-        Debug.Log("Logros actualizados en backend.");
 
         killsNormal = 0;
         killsFast = 0;
@@ -137,11 +168,10 @@ public class GameStatsManager : MonoBehaviour
 
         scoreThisRun = 0;
 
-        killsThisRun = 0;
-        xpThisRun = 0;
-
-        SceneManager.LoadScene("MainMenu");
+        wavesCompleted = 0;
+        minutesPlayed = 0;
     }
+
     private void Update()
     {
         timePlayed += Time.deltaTime;

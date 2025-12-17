@@ -5,6 +5,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "usuario")
@@ -47,5 +48,6 @@ public class User {
 
     // Relación con logros
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<UsuarioLogro> usuarioLogros = new ArrayList<>();
 }

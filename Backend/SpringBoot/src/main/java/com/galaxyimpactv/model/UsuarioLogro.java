@@ -3,6 +3,7 @@ package com.galaxyimpactv.model;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "usuario_logro")
@@ -18,6 +19,7 @@ public class UsuarioLogro {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "FK_idUsuario", nullable = false)
+    @JsonIgnore
     private User usuario;
 
     @ManyToOne(fetch = FetchType.LAZY)

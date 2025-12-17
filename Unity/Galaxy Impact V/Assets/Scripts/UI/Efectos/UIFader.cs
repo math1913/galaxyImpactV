@@ -27,7 +27,7 @@ public class UIFader : MonoBehaviour
             canvasGroup.alpha = Mathf.Lerp(0, 1, t / fadeDuration);
             yield return null;
         }
-
+                    
         canvasGroup.alpha = 1f;
         canvasGroup.interactable = true;
         canvasGroup.blocksRaycasts = true;

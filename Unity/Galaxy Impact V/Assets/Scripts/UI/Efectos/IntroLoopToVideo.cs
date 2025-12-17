@@ -1,48 +1,79 @@
 using UnityEngine;
 using UnityEngine.Video;
+using System.Collections;
 
 public class IntroLoopToVideo : MonoBehaviour
 {
     public VideoPlayer introPlayer;
     public VideoPlayer loopPlayer;
     public UIFader uiFader;
+    public CanvasGroup blackScreen; // Panel negro fullscreen
+
+    void Awake()
+    {
+        // INTRO
+        introPlayer.source = VideoSource.Url;
+        introPlayer.url = System.IO.Path.Combine(
+            Application.streamingAssetsPath,
+            "intro.mp4"
+        );
+
+        introPlayer.playOnAwake = false;
+        introPlayer.isLooping = false;
+
+        // LOOP
+        loopPlayer.source = VideoSource.Url;
+        loopPlayer.url = System.IO.Path.Combine(
+            Application.streamingAssetsPath,
+            "loop.mp4"
+        );
+
+        loopPlayer.playOnAwake = false;
+        loopPlayer.isLooping = true;
+    }
 
     void Start()
     {
-        // Intro: reproducimos normal
-        introPlayer.gameObject.SetActive(true);
+        // Negro al inicio para evitar flashes
+        if (blackScreen != null)
+            blackScreen.alpha = 1f;
+
         introPlayer.loopPointReached += OnIntroEnd;
 
-        // Loop: lo dejamos activo PERO pausado (esto es clave)
-        loopPlayer.gameObject.SetActive(true);
-        loopPlayer.playOnAwake = false;
-        loopPlayer.Pause();
-
-        // Preparamos el loop
+        // Preparamos ambos
+        introPlayer.Prepare();
         loopPlayer.Prepare();
+
+        StartCoroutine(PlayIntroWhenReady());
+    }
+
+    IEnumerator PlayIntroWhenReady()
+    {
+        while (!introPlayer.isPrepared)
+            yield return null;
+
+        // Quitamos negro cuando el video está listo
+        if (blackScreen != null)
+            blackScreen.alpha = 0f;
 
         introPlayer.Play();
     }
 
     void OnIntroEnd(VideoPlayer vp)
     {
-        // Esperamos a que el loop esté preparado
-        StartCoroutine(ActivateLoopWhenReady());
+        StartCoroutine(SwapToLoop());
     }
 
-    private System.Collections.IEnumerator ActivateLoopWhenReady()
+    IEnumerator SwapToLoop()
     {
-        // Si aún no está listo, esperamos
         while (!loopPlayer.isPrepared)
             yield return null;
 
-        // Ahora cambiamos:
-        introPlayer.gameObject.SetActive(false);
+        // Para Camera Near Plane: NO desactivar GameObject
+        introPlayer.enabled = false;
+        loopPlayer.enabled = true;
 
-        // Reproducimos el loop
         loopPlayer.Play();
-
-        // Fade de UI
         uiFader.FadeIn();
     }
 }

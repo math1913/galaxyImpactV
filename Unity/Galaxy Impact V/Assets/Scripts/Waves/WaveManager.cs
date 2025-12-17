@@ -144,6 +144,8 @@ public class WaveManager : MonoBehaviour
 
     [Header("Dificultad")]
     [SerializeField] private DifficultyProfile difficulty;
+    [SerializeField] private MinimapController minimap;
+
 
 
     // Estado interno
@@ -173,6 +175,9 @@ public class WaveManager : MonoBehaviour
         Debug.Log("Difficulty loaded: " + difficulty);
         if (!player)
             player = GameObject.FindGameObjectWithTag("Player")?.transform;
+        if (!minimap)
+            minimap = GameObject.FindGameObjectWithTag("Minimap")?.GetComponent<MinimapController>();
+
 
         if (minKillsForPickup < 1) minKillsForPickup = 1;
         if (maxKillsForPickup < minKillsForPickup) maxKillsForPickup = minKillsForPickup;
@@ -281,6 +286,7 @@ public class WaveManager : MonoBehaviour
             }
 
             GameObject enemy = Instantiate(prefabToSpawn, spawnPos, Quaternion.identity);
+            minimap?.RegisterEnemy(enemy.transform);
 
             // Contador por tipo
             if (!enemySpawnCount.ContainsKey(chosen))
@@ -310,6 +316,7 @@ public class WaveManager : MonoBehaviour
 
                 ec.OnDeath.AddListener(() =>
                 {
+                    minimap?.UnregisterEnemy(enemyTransform);
                     HandleEnemyDeath(enemyTransform.position);
                 });
             }

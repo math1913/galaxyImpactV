@@ -3,6 +3,7 @@ package com.galaxyimpactv.model;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "logro")
@@ -32,5 +33,6 @@ public class Achievement {
     private Long puntosRecompensa;
 
     @OneToMany(mappedBy = "logro", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<UsuarioLogro> usuarioLogros;
 }

@@ -13,15 +13,31 @@ PrefabInstance:
       value: PickupXP Variant
       objectReference: {fileID: 0}
     - target: {fileID: 3100050095606771687, guid: de31eb19a1b82754089388cad212568a, type: 3}
+      propertyPath: m_Size.x
+      value: 8.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 3100050095606771687, guid: de31eb19a1b82754089388cad212568a, type: 3}
+      propertyPath: m_Size.y
+      value: 7.42
+      objectReference: {fileID: 0}
+    - target: {fileID: 3100050095606771687, guid: de31eb19a1b82754089388cad212568a, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -1734003553273331903, guid: 0ce1a498aa3a6464cb690c392945bd3c, type: 3}
+    - target: {fileID: 3100050095606771687, guid: de31eb19a1b82754089388cad212568a, type: 3}
       propertyPath: m_Color.b
-      value: 0.938499
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3100050095606771687, guid: de31eb19a1b82754089388cad212568a, type: 3}
       propertyPath: m_Color.g
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3100050095606771687, guid: de31eb19a1b82754089388cad212568a, type: 3}
       propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3100050095606771687, guid: de31eb19a1b82754089388cad212568a, type: 3}
+      propertyPath: m_WasSpriteAssigned
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3100050095606771687, guid: de31eb19a1b82754089388cad212568a, type: 3}
@@ -93,4 +109,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27ee0d5515a51a4499429e9d46327208, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  floatAmplitude: 0.2
+  floatSpeed: 2
+  pickupSound: {fileID: 0}
   xpAmount: 50

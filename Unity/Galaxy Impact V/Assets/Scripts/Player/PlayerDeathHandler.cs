@@ -13,11 +13,18 @@ public class PlayerDeathHandler : MonoBehaviour
 
     private void OnPlayerDeath()
     {
-        
-        SceneManager.LoadScene("GameOver");
-        Debug.Log("El jugador ha muerto. Enviando stats a la API...");
+        Debug.Log("El jugador ha muerto.");
 
         if (GameStatsManager.Instance != null)
-            GameStatsManager.Instance.EndRunAndSendToApi();
+        {
+            Debug.Log("Enviando stats a la API (background)...");
+            _ = GameStatsManager.Instance.EndRunAndSendToApi();
+        }
+        else
+        {
+            Debug.LogWarning("GameStatsManager.Instance es null");
+            SceneManager.LoadScene("GameOver");
+        }
     }
+
 }

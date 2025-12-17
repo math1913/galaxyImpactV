@@ -43,6 +43,8 @@ public class AchievementAPIClient : MonoBehaviour
         public int pickupShield;
         public int pickupAmmo;
         public int pickupExp;
+        public int wavesCompleted;
+        public int levelReached;
     }
 
     // ---------- MODELO RESPUESTA LOGROS ----------

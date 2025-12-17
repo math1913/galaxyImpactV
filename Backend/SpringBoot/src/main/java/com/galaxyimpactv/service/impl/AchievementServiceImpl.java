@@ -35,42 +35,42 @@ public class AchievementServiceImpl implements AchievementService {
 	@Override
 	public void addProgress(Long userId, String codigoLogro, long amount) {
 
-	// Buscar usuario
-	User usuario = userRepository.findById(userId)  
-			.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+		// Buscar usuario
+		User usuario = userRepository.findById(userId)  
+				.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-	// Buscar logro
-	Achievement logro = achievementRepository.findByCodigo(codigoLogro)
-			.orElseThrow(() -> new RuntimeException("Logro no encontrado: " + codigoLogro));
+		// Buscar logro
+		Achievement logro = achievementRepository.findByCodigo(codigoLogro)
+				.orElseThrow(() -> new RuntimeException("Logro no encontrado: " + codigoLogro));
 
-	// Buscar progreso usuario-logro
-	UsuarioLogro usuarioLogro = usuarioLogroRepository
-			.findByUsuarioAndLogro(usuario, logro)
-			.orElse(null);
+		// Buscar progreso usuario-logro
+		UsuarioLogro usuarioLogro = usuarioLogroRepository
+				.findByUsuarioAndLogro(usuario, logro)
+				.orElse(null);
 
-	if (usuarioLogro == null) {
-			usuarioLogro = UsuarioLogro.builder()
-					.usuario(usuario)
-					.logro(logro)
-					.progresoActual(0L)
-					.completado(false)
-					.build();
-	}
+		if (usuarioLogro == null) {
+				usuarioLogro = UsuarioLogro.builder()
+						.usuario(usuario)
+						.logro(logro)
+						.progresoActual(0L)
+						.completado(false)
+						.build();
+		}
 
-	// Sumar progreso
-	long nuevoProgreso = usuarioLogro.getProgresoActual() + amount;
-	usuarioLogro.setProgresoActual(nuevoProgreso);
+		// Sumar progreso
+		long nuevoProgreso = usuarioLogro.getProgresoActual() + amount;
+		usuarioLogro.setProgresoActual(nuevoProgreso);
 
-	// COMPLETADO
-	if (!usuarioLogro.getCompletado() && nuevoProgreso >= logro.getObjetivo()) {
+		// COMPLETADO
+		if (!usuarioLogro.getCompletado() && nuevoProgreso >= logro.getObjetivo()) {
 
-			usuarioLogro.setCompletado(true);
-			usuarioLogro.setFechaDesbloqueo(LocalDateTime.now());
-			// Actualizar puntos de experiencia del usuario
-			userService.updateStats(userId, 0, logro.getPuntosRecompensa());
-	}
+				usuarioLogro.setCompletado(true);
+				usuarioLogro.setFechaDesbloqueo(LocalDateTime.now());
+				// Actualizar puntos de experiencia del usuario
+				userService.updateStats(userId, 0, logro.getPuntosRecompensa());
+		}
 
-    usuarioLogroRepository.save(usuarioLogro);
+		usuarioLogroRepository.save(usuarioLogro);
     }
 
 	private AchievementDTO mapToDTO(UsuarioLogro ul) {
@@ -120,44 +120,56 @@ public class AchievementServiceImpl implements AchievementService {
 		return dtos;
 	}
 
-
 	@Override
 	public void processBatch(AchievementBatchRequest r) {
 
 		Long userId = r.getUserId();
 
-		// 1) Kills normales
+		//Kills totales
+		long killsTotal = 
+			r.getKillsNormal() 
+			+ r.getKillsFast() 
+			+ r.getKillsTank() 
+			+ r.getKillsShooter();
+
+		addProgress(userId, "KILL_TOTAL_100", killsTotal);
+		addProgress(userId, "KILL_TOTAL_500", killsTotal);
+		addProgress(userId, "KILL_TOTAL_1000", killsTotal);
+		addProgress(userId, "KILL_TOTAL_2500", killsTotal);
+		addProgress(userId, "KILL_TOTAL_5000", killsTotal);
+
+		// Kills normales
 		addProgress(userId, "KILL_NORMAL_100", r.getKillsNormal());
 		addProgress(userId, "KILL_NORMAL_300", r.getKillsNormal());
 		addProgress(userId, "KILL_NORMAL_700", r.getKillsNormal());
 		addProgress(userId, "KILL_NORMAL_1500", r.getKillsNormal());
 
-		// 2) Kills fast
+		// Kills fast
 		addProgress(userId, "KILL_FAST_50", r.getKillsFast());
 		addProgress(userId, "KILL_FAST_150", r.getKillsFast());
 		addProgress(userId, "KILL_FAST_400", r.getKillsFast());
 		addProgress(userId, "KILL_FAST_800", r.getKillsFast());
 
-		// 3) Kills tank
+		//Kills tank
 		addProgress(userId, "KILL_TANK_25", r.getKillsTank());
 		addProgress(userId, "KILL_TANK_75", r.getKillsTank());
 		addProgress(userId, "KILL_TANK_200", r.getKillsTank());
 		addProgress(userId, "KILL_TANK_400", r.getKillsTank());
 
-		// 4) Kills shooter
+		// Kills shooter
 		addProgress(userId, "KILL_SHOOTER_10", r.getKillsShooter());
 		addProgress(userId, "KILL_SHOOTER_40", r.getKillsShooter());
 		addProgress(userId, "KILL_SHOOTER_100", r.getKillsShooter());
 		addProgress(userId, "KILL_SHOOTER_250", r.getKillsShooter());
 
-		// 5) Tiempo
+		// tiempo jugado
 		addProgress(userId, "TIME_SURVIVE_30", r.getMinutesPlayed());
 		addProgress(userId, "TIME_SURVIVE_60", r.getMinutesPlayed());
 		addProgress(userId, "TIME_SURVIVE_180", r.getMinutesPlayed());
 		addProgress(userId, "TIME_SURVIVE_360", r.getMinutesPlayed());
 		addProgress(userId, "TIME_SURVIVE_720", r.getMinutesPlayed());
 
-		// 6) Score
+		// Score
 		addProgress(userId, "SCORE_SINGLE_200", r.getScore());
 		addProgress(userId, "SCORE_SINGLE_500", r.getScore());
 		addProgress(userId, "SCORE_SINGLE_800", r.getScore());
@@ -165,7 +177,7 @@ public class AchievementServiceImpl implements AchievementService {
 		addProgress(userId, "SCORE_SINGLE_1600", r.getScore());
 		addProgress(userId, "SCORE_SINGLE_2500", r.getScore());
 
-		// 7) Pickups
+		// Pickups
 		addProgress(userId, "PICKUP_HEALTH_25", r.getPickupHealth());
 		addProgress(userId, "PICKUP_HEALTH_100", r.getPickupHealth());
 		addProgress(userId, "PICKUP_HEALTH_250", r.getPickupHealth());
@@ -181,7 +193,58 @@ public class AchievementServiceImpl implements AchievementService {
 		addProgress(userId, "PICKUP_EXP_50", r.getPickupExp());
 		addProgress(userId, "PICKUP_EXP_200", r.getPickupExp());
 		addProgress(userId, "PICKUP_EXP_500", r.getPickupExp());
+
+		// Waves totales completadas
+		addProgress(userId, "WAVES_TOTAL_10", r.getWavesCompleted());
+		addProgress(userId, "WAVES_TOTAL_25", r.getWavesCompleted());
+		addProgress(userId, "WAVES_TOTAL_50", r.getWavesCompleted());
+		addProgress(userId, "WAVES_TOTAL_100", r.getWavesCompleted());
+		addProgress(userId, "WAVES_TOTAL_200", r.getWavesCompleted());
+		addProgress(userId, "WAVES_TOTAL_500", r.getWavesCompleted());
+
+		User usuario = userRepository.findById(userId)
+			.orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + userId));
+
+		int nivelActual = usuario.getNivelActual();
+
+		setProgress(userId, "LEVEL_REACH_10", nivelActual);
+		setProgress(userId, "LEVEL_REACH_30", nivelActual);
+		setProgress(userId, "LEVEL_REACH_100", nivelActual);
+		setProgress(userId, "LEVEL_REACH_500", nivelActual);
 	}
+	private void setProgress(Long userId, String codigoLogro, long value) {
+
+		User usuario = userRepository.findById(userId)
+				.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+		Achievement logro = achievementRepository.findByCodigo(codigoLogro)
+				.orElseThrow(() -> new RuntimeException("Logro no encontrado: " + codigoLogro));
+
+		UsuarioLogro usuarioLogro = usuarioLogroRepository.findByUsuarioAndLogro(usuario, logro)
+				.orElse(null);
+
+		if (usuarioLogro == null) {
+			usuarioLogro = UsuarioLogro.builder()
+					.usuario(usuario)
+					.logro(logro)
+					.progresoActual(0L)
+					.completado(false)
+					.build();
+		}
+
+		// Setear progreso exacto (sin sumar)
+		usuarioLogro.setProgresoActual(value);
+
+		// Marcar completado si corresponde
+		if (!usuarioLogro.getCompletado() && value >= logro.getObjetivo()) {
+			usuarioLogro.setCompletado(true);
+			usuarioLogro.setFechaDesbloqueo(LocalDateTime.now());
+			userService.updateStats(userId, 0, logro.getPuntosRecompensa());
+		}
+
+		usuarioLogroRepository.save(usuarioLogro);
+	}
+
 	private int extractLastNumber(String code) {
 		String[] parts = code.split("_");
 		return Integer.parseInt(parts[parts.length - 1]);
