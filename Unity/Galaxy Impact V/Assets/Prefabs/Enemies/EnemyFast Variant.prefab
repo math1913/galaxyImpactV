@@ -14,7 +14,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 848928328293391054, guid: fb384aa801d8b7043806eb080b83da03, type: 3}
       propertyPath: moveSpeed
-      value: 2.5
+      value: 2.8
       objectReference: {fileID: 0}
     - target: {fileID: 848928328293391054, guid: fb384aa801d8b7043806eb080b83da03, type: 3}
       propertyPath: contactDamage
@@ -32,21 +32,37 @@ PrefabInstance:
       propertyPath: OnDeath.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 1754694501609695684, guid: fb384aa801d8b7043806eb080b83da03, type: 3}
+      propertyPath: m_Size.x
+      value: 4.0867586
+      objectReference: {fileID: 0}
+    - target: {fileID: 1754694501609695684, guid: fb384aa801d8b7043806eb080b83da03, type: 3}
+      propertyPath: m_Size.y
+      value: 1.6501364
+      objectReference: {fileID: 0}
+    - target: {fileID: 1754694501609695684, guid: fb384aa801d8b7043806eb080b83da03, type: 3}
+      propertyPath: m_Offset.x
+      value: 0.34177756
+      objectReference: {fileID: 0}
+    - target: {fileID: 1754694501609695684, guid: fb384aa801d8b7043806eb080b83da03, type: 3}
+      propertyPath: m_Offset.y
+      value: -0.051690288
+      objectReference: {fileID: 0}
     - target: {fileID: 3500441943167668692, guid: fb384aa801d8b7043806eb080b83da03, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.12569
+      value: 0.28961736
       objectReference: {fileID: 0}
     - target: {fileID: 3500441943167668692, guid: fb384aa801d8b7043806eb080b83da03, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.13248001
+      value: 0.27173665
       objectReference: {fileID: 0}
     - target: {fileID: 3500441943167668692, guid: fb384aa801d8b7043806eb080b83da03, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.1624
+      value: 1.5772
       objectReference: {fileID: 0}
     - target: {fileID: 3500441943167668692, guid: fb384aa801d8b7043806eb080b83da03, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -3.5388
+      value: -3.6927
       objectReference: {fileID: 0}
     - target: {fileID: 3500441943167668692, guid: fb384aa801d8b7043806eb080b83da03, type: 3}
       propertyPath: m_LocalPosition.z
@@ -81,9 +97,17 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4523111916344981210, guid: fb384aa801d8b7043806eb080b83da03, type: 3}
+      propertyPath: m_Size.x
+      value: 5.06
+      objectReference: {fileID: 0}
+    - target: {fileID: 4523111916344981210, guid: fb384aa801d8b7043806eb080b83da03, type: 3}
+      propertyPath: m_Size.y
+      value: 2.21
+      objectReference: {fileID: 0}
+    - target: {fileID: 4523111916344981210, guid: fb384aa801d8b7043806eb080b83da03, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -7759264218076157947, guid: 9872a12fd2fc35f459c13aa8ba7cc0a5, type: 3}
+      objectReference: {fileID: -7759264218076157947, guid: 88cd3a714ade9ab438e894fa742345bc, type: 3}
     - target: {fileID: 4523111916344981210, guid: fb384aa801d8b7043806eb080b83da03, type: 3}
       propertyPath: m_Color.b
       value: 1
@@ -94,6 +118,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4523111916344981210, guid: fb384aa801d8b7043806eb080b83da03, type: 3}
       propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4523111916344981210, guid: fb384aa801d8b7043806eb080b83da03, type: 3}
+      propertyPath: m_WasSpriteAssigned
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6294728344263907713, guid: fb384aa801d8b7043806eb080b83da03, type: 3}

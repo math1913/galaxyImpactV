@@ -17,9 +17,17 @@ PrefabInstance:
       value: PickupShield Variiant
       objectReference: {fileID: 0}
     - target: {fileID: 3100050095606771687, guid: de31eb19a1b82754089388cad212568a, type: 3}
+      propertyPath: m_Size.x
+      value: 6.17
+      objectReference: {fileID: 0}
+    - target: {fileID: 3100050095606771687, guid: de31eb19a1b82754089388cad212568a, type: 3}
+      propertyPath: m_Size.y
+      value: 6.82
+      objectReference: {fileID: 0}
+    - target: {fileID: 3100050095606771687, guid: de31eb19a1b82754089388cad212568a, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 2389193319765324094, guid: f9cd8c91675b3cf4b8ef6bc0ff8a60dd, type: 3}
+      objectReference: {fileID: 2389193319765324094, guid: 67f701bb254d65842b387935f65d31b1, type: 3}
     - target: {fileID: 3100050095606771687, guid: de31eb19a1b82754089388cad212568a, type: 3}
       propertyPath: m_Color.b
       value: 1
@@ -30,6 +38,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3100050095606771687, guid: de31eb19a1b82754089388cad212568a, type: 3}
       propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3100050095606771687, guid: de31eb19a1b82754089388cad212568a, type: 3}
+      propertyPath: m_WasSpriteAssigned
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3100050095606771687, guid: de31eb19a1b82754089388cad212568a, type: 3}
@@ -115,5 +127,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   floatAmplitude: 0.2
   floatSpeed: 2
-  pickupSound: {fileID: 0}
+  pickupSound: {fileID: 8300000, guid: 1be7aea5643a57c42ad45d9744a44529, type: 3}
   shieldAmount: 10

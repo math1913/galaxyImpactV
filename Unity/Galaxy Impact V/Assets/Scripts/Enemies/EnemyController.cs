@@ -1,9 +1,6 @@
-
 using UnityEngine;
 using Pathfinding;
-
-
-
+using System;
 
 [RequireComponent(typeof(Collider2D))]
 public class EnemyController : MonoBehaviour
@@ -22,6 +19,9 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private float touchCooldown = 0.5f;
     [SerializeField] private float moveSpeed = 3.5f;
     private float touchTimer;
+    private float baseMoveSpeed;
+    private IAstarAI ai;
+
 
     [Header("Referencias")]
     [SerializeField] private Health health; // tu script de vida del enemigo
@@ -36,7 +36,7 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private int xpOnDeath = 5; // set en inspector por tipo
 
 
-
+    public static event Action<EnemyType> OnAnyEnemyKilled;
     private void Awake()
     {
         if (!health) health = GetComponent<Health>();
@@ -45,8 +45,10 @@ public class EnemyController : MonoBehaviour
             health.OnDeath.AddListener(() => 
             {
                 OnDeath.Invoke();
+                OnAnyEnemyKilled?.Invoke(enemyType);
+
                 if (GameStatsManager.Instance != null){
-                    GameStatsManager.Instance.RegisterKill(enemyType, xpOnDeath); //guarda la kill de ese tipo de enemigo y la xp
+                    GameStatsManager.Instance.RegisterKill(enemyType, xpOnDeath);
                 }
             });
         destSetter = GetComponent<AIDestinationSetter>();
@@ -54,6 +56,14 @@ public class EnemyController : MonoBehaviour
         // Si no asignas nada en el inspector, rotaremos este mismo objeto
         if (visualToRotate == null)
             visualToRotate = transform;
+
+        baseMoveSpeed = moveSpeed;
+        ai = GetComponent<IAstarAI>();
+        if (ai != null)
+        {
+            ai.maxSpeed = moveSpeed;
+        }
+
     }
 
     private void Update()
@@ -68,6 +78,7 @@ public class EnemyController : MonoBehaviour
         }
 
         RotateTowardsTarget();
+        ApplyGlobalSlow();
     }
 
     private void RotateTowardsTarget()
@@ -105,12 +116,22 @@ public class EnemyController : MonoBehaviour
     public void SetDifficultyMultiplier(float multiplier)
     {
         moveSpeed *= multiplier;
-        var ai = GetComponent<IAstarAI>(); // funciona con AIPath o AILerp
+        baseMoveSpeed = moveSpeed;
+
+        if (ai == null) ai = GetComponent<IAstarAI>();
         if (ai != null)
         {
-            ai.maxSpeed = moveSpeed;
+            ai.maxSpeed = baseMoveSpeed * EnemyGlobalSlow.CurrentMultiplier;
         }
     }
 
+
+    private void ApplyGlobalSlow()
+    {
+        if (ai == null) return;
+
+        // baseMoveSpeed contiene tu velocidad ya escalada por dificultad si llamaste SetDifficultyMultiplier
+        ai.maxSpeed = baseMoveSpeed * EnemyGlobalSlow.CurrentMultiplier;
+    }
 
 }

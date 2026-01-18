@@ -46,7 +46,6 @@ public class MainMenuController : MonoBehaviour
         if (levelText != null)
             levelText.text = ("Level: " + currentUser.nivelActual.ToString());
 
-        // ======== ALIENS TOTALES (sumatoria de kills por partida) ========
         int aliensTotales = 0;
         if (currentUser.puntuaciones != null)
         {
@@ -57,7 +56,6 @@ public class MainMenuController : MonoBehaviour
         if (aliensKilledText != null)
             aliensKilledText.text = ("Aliens Killed: " + aliensTotales.ToString());
 
-        // ======== HIGH SCORE ========
         int highScore = 0;
         if (currentUser.puntuaciones != null && currentUser.puntuaciones.Length > 0)
         {

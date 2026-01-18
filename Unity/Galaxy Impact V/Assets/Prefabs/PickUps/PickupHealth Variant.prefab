@@ -13,9 +13,17 @@ PrefabInstance:
       value: PickupHealth Variant
       objectReference: {fileID: 0}
     - target: {fileID: 3100050095606771687, guid: de31eb19a1b82754089388cad212568a, type: 3}
+      propertyPath: m_Size.x
+      value: 8.92
+      objectReference: {fileID: 0}
+    - target: {fileID: 3100050095606771687, guid: de31eb19a1b82754089388cad212568a, type: 3}
+      propertyPath: m_Size.y
+      value: 8.81
+      objectReference: {fileID: 0}
+    - target: {fileID: 3100050095606771687, guid: de31eb19a1b82754089388cad212568a, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -5185649437945853404, guid: d423f12a23d214440a526d97a8c4cfeb, type: 3}
+      objectReference: {fileID: -5185649437945853404, guid: f79db7f4d9121624c9f9a43d45d0b4a1, type: 3}
     - target: {fileID: 3100050095606771687, guid: de31eb19a1b82754089388cad212568a, type: 3}
       propertyPath: m_Color.a
       value: 1
@@ -30,6 +38,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3100050095606771687, guid: de31eb19a1b82754089388cad212568a, type: 3}
       propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3100050095606771687, guid: de31eb19a1b82754089388cad212568a, type: 3}
+      propertyPath: m_WasSpriteAssigned
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3100050095606771687, guid: de31eb19a1b82754089388cad212568a, type: 3}
@@ -119,5 +131,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   floatAmplitude: 0.2
   floatSpeed: 2
-  pickupSound: {fileID: 0}
-  healAmount: 25
+  pickupSound: {fileID: 8300000, guid: 1be7aea5643a57c42ad45d9744a44529, type: 3}
+  healAmount: 20

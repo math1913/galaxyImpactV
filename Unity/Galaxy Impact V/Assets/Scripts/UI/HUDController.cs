@@ -1,6 +1,5 @@
 using UnityEngine;
 using TMPro;
-using System.Diagnostics;
 using System.Collections;
 
 public class HUDController : MonoBehaviour
@@ -38,17 +37,32 @@ public class HUDController : MonoBehaviour
 
     private Color healthOriginalColor;
     private Color shieldOriginalColor;
+
     private int lastShieldValue;
+
+    // último valor de vida para diferenciar daño vs cura
+    private int lastHealthValue;
 
     private void Start()
     {
         if (waveManager)
             waveManager.OnWaveStarted.AddListener(UpdateWaveText);
 
+        if (healthBar)
+            healthOriginalColor = healthBar.fillRect.GetComponent<UnityEngine.UI.Image>().color;
+
+        if (shieldBar)
+            shieldOriginalColor = shieldBar.fillRect.GetComponent<UnityEngine.UI.Image>().color;
+
         if (playerHealth)
         {
             playerHealth.OnHealthChanged.AddListener(OnHealthChanged);
+
+            // Render inicial sin flashear (porque lastHealthValue no estaba seteado)
             OnHealthChanged(playerHealth.CurrentHealth, playerHealth.MaxHealth);
+
+            // Inicializar el último valor después del primer render
+            lastHealthValue = playerHealth.CurrentHealth;
         }
 
         if (playerShield)
@@ -56,7 +70,6 @@ public class HUDController : MonoBehaviour
             playerShield.OnShieldChanged.AddListener(OnShieldChanged);
             OnShieldChanged(playerShield.CurrentShield, playerShield.MaxShield);
             lastShieldValue = playerShield.CurrentShield;
-
         }
 
         if (playerWeapon)
@@ -65,12 +78,6 @@ public class HUDController : MonoBehaviour
             playerWeapon.OnTotalAmmoChanged.AddListener(UpdateAmmo);
             UpdateAmmo(playerWeapon.CurrentAmmo);
         }
-        if (healthBar)
-            healthOriginalColor = healthBar.fillRect.GetComponent<UnityEngine.UI.Image>().color;
-
-        if (shieldBar)
-            shieldOriginalColor = shieldBar.fillRect.GetComponent<UnityEngine.UI.Image>().color;
-
     }
 
     private void OnHealthChanged(int current, int max)
@@ -79,19 +86,23 @@ public class HUDController : MonoBehaviour
             healthText.text = $"{current} | {max}";
 
         if (healthBar)
-            healthBar.value = (float)current / max;
+            healthBar.value = max > 0 ? (float)current / max : 0f;
 
-        // Flash cuando baja la salud
-        if (current < max)
+        //flashear solo si bajó respecto al valor anterior
+        if (current < lastHealthValue)
             StartCoroutine(FlashBar(healthBar, healthFlashColor, healthOriginalColor));
+
+        // actualizar el valor anterior
+        lastHealthValue = current;
     }
+
     private void OnShieldChanged(int current, int max)
     {
         if (shieldText)
             shieldText.text = $"{current} |  {max}";
 
         if (shieldBar)
-            shieldBar.value = (float)current / max;
+            shieldBar.value = max > 0 ? (float)current / max : 0f;
 
         // solo si el escudo bajo
         if (current < lastShieldValue)
@@ -106,13 +117,11 @@ public class HUDController : MonoBehaviour
         if (!ammoText) return;
 
         int current = playerWeapon.CurrentAmmo;
-        int total = playerWeapon.TotalAmmo;
 
         ammoText.text = playerWeapon.IsReloading
             ? $"{current}\nReloading..."
             : $"{current}";
     }
-
 
     private void UpdateWaveText(int wave)
     {
@@ -122,12 +131,13 @@ public class HUDController : MonoBehaviour
 
     private IEnumerator FlashBar(UnityEngine.UI.Slider bar, Color flashColor, Color originalColor)
     {
+        if (bar == null || bar.fillRect == null) yield break;
+
         var image = bar.fillRect.GetComponent<UnityEngine.UI.Image>();
+        if (image == null) yield break;
+
         image.color = flashColor;
-
         yield return new WaitForSeconds(flashDuration);
-
         image.color = originalColor;
     }
-
 }

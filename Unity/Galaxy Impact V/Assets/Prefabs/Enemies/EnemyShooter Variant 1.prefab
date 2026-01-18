@@ -89,12 +89,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 5
-  m_Sprite: {fileID: 1333401826788945531, guid: 0cc12de6c9607c94bb69543ef472ed3d, type: 3}
-  m_Color: {r: 0.34949803, g: 0.3963107, b: 0.96981126, a: 1}
+  m_Sprite: {fileID: 1333401826788945531, guid: 8b32737689bf0c147b3a7e33f983412a, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 8.75, y: 7.42}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -150,6 +150,20 @@ MonoBehaviour:
   OnDamage:
     m_PersistentCalls:
       m_Calls: []
+  flashOnDamage: 1
+  damageFlashColor: {r: 1, g: 0, b: 0, a: 1}
+  damageFlashDuration: 0.12
+  flashRenderers: []
+  damageSound: {fileID: 0}
+  playerDamageSound: {fileID: 0}
+  enemyDamageSound: {fileID: 8300000, guid: d0d6e420c9c82474faea24a84b0a310c, type: 3}
+  damageSoundVolume: 0.5
+  autoDetectPlayerByTag: 1
+  isPlayer: 0
+  deathSound: {fileID: 0}
+  playerDeathSound: {fileID: 0}
+  enemyDeathSound: {fileID: 0}
+  deathSoundVolume: 1
 --- !u!114 &4597270814930053460
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -324,7 +338,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weapon: {fileID: 6273352981348748854}
-  fireInterval: 1.2
+  fireInterval: 1.1
   shootRange: 15
 --- !u!114 &3200056168325691363
 MonoBehaviour:
@@ -361,13 +375,15 @@ MonoBehaviour:
   spreadDeg: 2
   automaticFire: 1
   autoReload: 1
-  totalAmmo: 90
+  totalAmmo: 100000
   OnAmmoChanged:
     m_PersistentCalls:
       m_Calls: []
   OnTotalAmmoChanged:
     m_PersistentCalls:
       m_Calls: []
+  fanAngleDeg: 60
+  fanSpawnOffset: 0.15
 --- !u!1 &4925308039085913175
 GameObject:
   m_ObjectHideFlags: 0
@@ -428,3 +444,5 @@ MonoBehaviour:
   OnTotalAmmoChanged:
     m_PersistentCalls:
       m_Calls: []
+  fanAngleDeg: 60
+  fanSpawnOffset: 0.15

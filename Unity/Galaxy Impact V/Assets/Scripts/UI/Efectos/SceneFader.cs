@@ -46,7 +46,7 @@ public class SceneFader : MonoBehaviour
         isTransitioning = true;
 
         if (audioSource != null)
-            audioSource.Play();
+            //audioSource.Play();
 
         yield return new WaitForSeconds(0.15f); // leve delay para escuchar el sonido
 
