@@ -14,16 +14,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3100050095606771687, guid: de31eb19a1b82754089388cad212568a, type: 3}
       propertyPath: m_Size.x
-      value: 8.75
+      value: 10.110823
       objectReference: {fileID: 0}
     - target: {fileID: 3100050095606771687, guid: de31eb19a1b82754089388cad212568a, type: 3}
       propertyPath: m_Size.y
-      value: 7.42
+      value: 6.2699995
       objectReference: {fileID: 0}
     - target: {fileID: 3100050095606771687, guid: de31eb19a1b82754089388cad212568a, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -1734003553273331903, guid: 0ce1a498aa3a6464cb690c392945bd3c, type: 3}
+      objectReference: {fileID: -1734003553273331903, guid: d7782229b87e85145982f794c38143cd, type: 3}
     - target: {fileID: 3100050095606771687, guid: de31eb19a1b82754089388cad212568a, type: 3}
       propertyPath: m_Color.b
       value: 1
@@ -44,6 +44,14 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+    - target: {fileID: 4146463334993499096, guid: de31eb19a1b82754089388cad212568a, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.09187404
+      objectReference: {fileID: 0}
+    - target: {fileID: 4146463334993499096, guid: de31eb19a1b82754089388cad212568a, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.102286674
+      objectReference: {fileID: 0}
     - target: {fileID: 4146463334993499096, guid: de31eb19a1b82754089388cad212568a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -84,6 +92,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 9148779053073614022, guid: de31eb19a1b82754089388cad212568a, type: 3}
+      propertyPath: m_Radius
+      value: 3.2732584
+      objectReference: {fileID: 0}
+    - target: {fileID: 9148779053073614022, guid: de31eb19a1b82754089388cad212568a, type: 3}
+      propertyPath: m_Offset.x
+      value: -0.05569469
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -111,5 +127,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   floatAmplitude: 0.2
   floatSpeed: 2
-  pickupSound: {fileID: 0}
+  pickupSound: {fileID: 8300000, guid: 1be7aea5643a57c42ad45d9744a44529, type: 3}
   xpAmount: 50

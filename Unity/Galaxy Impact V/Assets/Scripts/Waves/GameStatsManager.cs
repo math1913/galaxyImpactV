@@ -27,6 +27,9 @@ public class GameStatsManager : MonoBehaviour
     public int killsThisRun = 0;
     public int xpThisRun = 0;
     public int wavesCompleted = 0;
+    private bool runActive = false;
+    private bool isSubscribedToWaveManager = false;
+
 
 
     [Header("Config XP por ronda")]
@@ -46,6 +49,7 @@ public class GameStatsManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject); // persiste entre escenas
+
     }
 
     // ======= KILLS & XP =======
@@ -60,6 +64,7 @@ public class GameStatsManager : MonoBehaviour
         }
         killsThisRun++;
         xpThisRun += xpGained;
+        scoreThisRun += xpGained;
         // Debug.Log($"Kill registrada. XP +{xpGained}. Totales: Kills={killsThisRun}, XP={xpThisRun}");
         Debug.Log($"[KILL] Tipo: {tipo} | " +
               $"Normal={killsNormal}, Speed={killsFast}, Tank={killsTank}, Shooter={killsShooter}");
@@ -68,6 +73,7 @@ public class GameStatsManager : MonoBehaviour
     public void AddXP(int amount)
     {
         xpThisRun += amount;
+        scoreThisRun += amount;
         // Debug.Log($"XP +{amount}. XP total run = {xpThisRun}");
     }
 
@@ -93,7 +99,7 @@ public class GameStatsManager : MonoBehaviour
         int userId = PlayerPrefs.GetInt("userId", -1);
         int kills = killsThisRun;
         int xp = xpThisRun;
-        int score = xpThisRun;
+        int score = scoreThisRun;
         int minutes = Mathf.FloorToInt(timePlayed / 60f);
 
         var batch = new AchievementAPIClient.AchievementBatchRequest
@@ -169,11 +175,15 @@ public class GameStatsManager : MonoBehaviour
         scoreThisRun = 0;
 
         wavesCompleted = 0;
+        timePlayed = 0f;   
         minutesPlayed = 0;
     }
 
     private void Update()
     {
         timePlayed += Time.deltaTime;
+        minutesPlayed = Mathf.FloorToInt(timePlayed / 60f);
     }
+
+
 }

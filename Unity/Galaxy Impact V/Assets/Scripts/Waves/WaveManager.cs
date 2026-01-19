@@ -36,6 +36,13 @@ public class EnemyEntry
     [Tooltip("Máximo de instancias de este enemigo por oleada.")]
     public int maxPerWave = 10;
 
+    [Header("Spawn radius por tipo")]
+    [Tooltip("Multiplicador del radio MIN para este tipo.")]
+    public float spawnRadiusMinMult = 1f;
+
+    [Tooltip("Multiplicador del radio MAX para este tipo.")]
+    public float spawnRadiusMaxMult = 1f;
+
     [Header("Coste para el sistema de puntos")]
     [Tooltip("Cuántos puntos cuesta spawnear UNA unidad de este enemigo.")]
     public int cost = 1;
@@ -114,6 +121,11 @@ public class WaveManager : MonoBehaviour
     [Header("Eventos")]
     public UnityEvent<int> OnWaveStarted;
     public UnityEvent<int> OnWaveCompleted;
+    [Header("Audio")]
+    [SerializeField] private AudioClip waveStartSfx;
+    [SerializeField, Range(0f, 1f)] private float waveStartSfxVolume = 1f;
+    [SerializeField] private bool playWaveStartSfx = true;
+
 
     [Header("Pickups - Configuración general")]
     [SerializeField] private LayerMask pickupObstructMask;
@@ -146,8 +158,6 @@ public class WaveManager : MonoBehaviour
     [SerializeField] private DifficultyProfile difficulty;
     [SerializeField] private MinimapController minimap;
 
-
-
     // Estado interno
     private int currentWave = 0;
     private int enemiesAlive = 0;
@@ -173,6 +183,8 @@ public class WaveManager : MonoBehaviour
         if (loaded != null)
             difficulty = loaded;
         Debug.Log("Difficulty loaded: " + difficulty);
+        Debug.Log(AudioListener.volume);
+        Debug.Log(AudioListener.pause);
         if (!player)
             player = GameObject.FindGameObjectWithTag("Player")?.transform;
         if (!minimap)
@@ -181,7 +193,8 @@ public class WaveManager : MonoBehaviour
 
         if (minKillsForPickup < 1) minKillsForPickup = 1;
         if (maxKillsForPickup < minKillsForPickup) maxKillsForPickup = minKillsForPickup;
-
+        if (GameStatsManager.Instance != null)
+            OnWaveCompleted.AddListener(GameStatsManager.Instance.OnWaveCompleted);
         ResetPickupKillThreshold();
 
         waveRoutine = StartCoroutine(WaveLoop());
@@ -193,7 +206,21 @@ public class WaveManager : MonoBehaviour
         {
             currentWave = i;
             OnWaveStarted?.Invoke(currentWave);
-
+            if (playWaveStartSfx && waveStartSfx != null)
+            {
+                // Preferir AudioManager si existe (mezcla con música + superposición)
+                if (AudioManager.Instance != null)
+                    AudioManager.Instance.PlaySFX(waveStartSfx, waveStartSfxVolume);
+                else
+                    AudioSource.PlayClipAtPoint(waveStartSfx, Vector3.zero, waveStartSfxVolume);
+            }
+            // Reset dash charges al inicio de cada oleada
+            if (player != null)
+            {
+                var dash = player.GetComponent<DashChargesEffect>();
+                if (dash != null)
+                    dash.ResetChargesToFull();
+            }
             // Reset de límites por tipo de enemigo
             enemySpawnCount.Clear();
             foreach (var e in enemyTypes)
@@ -227,7 +254,6 @@ public class WaveManager : MonoBehaviour
             yield return new WaitForSeconds(timeBetweenWaves);
         }
 
-        Debug.Log("Todas las oleadas completadas.");
     }
 
     /// <summary>
@@ -275,7 +301,16 @@ public class WaveManager : MonoBehaviour
                 minRadius = currentMaxRadius * 0.5f;
             }
 
-            float distance = Random.Range(minRadius, currentMaxRadius);
+            float typeMin = minRadius * Mathf.Max(0.01f, chosen.spawnRadiusMinMult);
+            float typeMax = currentMaxRadius * Mathf.Max(0.01f, chosen.spawnRadiusMaxMult);
+            typeMax = Mathf.Min(typeMax, spawnRadiusMaxCap);
+
+            // Seguridad: que min no supere max
+            if (typeMin > typeMax)
+                typeMin = typeMax * 0.9f;
+
+            float distance = Random.Range(typeMin, typeMax);
+
             Vector3 spawnPos = Vector3.zero + new Vector3(spawnDir.x, spawnDir.y, 0) * distance;
 
             GameObject prefabToSpawn = chosen.prefab != null ? chosen.prefab : enemyPrefab;
